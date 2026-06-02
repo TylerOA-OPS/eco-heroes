@@ -1,0 +1,51 @@
+﻿const PACK_POOL = [
+  // COMMON â€” role players & glue guys
+  {first:'KURT',last:'RAMBIS',number:31,rarity:'common',team:'LAL',tag:'BLUE-COLLAR'},
+  {first:'JEROME',last:'WILLIAMS',number:13,rarity:'common',team:'TOR',tag:'JUNKYARD DOG'},
+  {first:'ANDERSON',last:'VAREJAO',number:17,rarity:'common',team:'CLE',tag:'WILD THING'},
+  {first:'ERIC',last:'SNOW',number:20,rarity:'common',team:'PHI',tag:'TOUGH-NOSED'},
+  // UNCOMMON â€” quality starters & cult heroes
+  {first:'JOHN',last:'STARKS',number:3,rarity:'uncommon',team:'NYK',tag:'BAGGER TO BALLER'},
+  {first:'HORACE',last:'GRANT',number:54,rarity:'uncommon',team:'CHI',tag:'GOGGLES'},
+  {first:'ANTHONY',last:'MASON',number:14,rarity:'uncommon',team:'NYK',tag:'WORK MAN'},
+  // RARE â€” All-Stars & near-stars
+  {first:'BEN',last:'WALLACE',number:3,rarity:'rare',team:'DET',tag:'BIG BEN',pose:'skyhook'},
+  {first:'MANU',last:'GINOBILI',number:20,rarity:'rare',team:'SAS',tag:'EURO STEP',pose:'fadeaway'},
+  // OLD SCHOOL â€” 90s/2000s greats
+  {first:'SHAWN',last:'KEMP',number:40,rarity:'oldschool',team:'OKC',tag:'REIGN MAN',pose:'dunk'},
+  {first:'PENNY',last:'HARDAWAY',number:1,rarity:'oldschool',team:'ORL',tag:'LIL PENNY',pose:'fadeaway'},
+  {first:'ALLEN',last:'IVERSON',number:3,rarity:'oldschool',team:'PHI',tag:'THE ANSWER',pose:'fadeaway'},
+  {first:'TRACY',last:'MCGRADY',number:1,rarity:'oldschool',team:'HOU',tag:'T-MAC',pose:'jumpman'},
+  // LEGEND â€” top-tier all-timers
+  {first:'DOMINIQUE',last:'WILKINS',number:21,rarity:'legend',team:'ATL',tag:'HUMAN HIGHLIGHT',pose:'dunk'},
+  {first:'CHARLES',last:'BARKLEY',number:34,rarity:'legend',team:'PHX',tag:'SIR CHARLES',pose:'dunk'},
+  {first:'JOHN',last:'STOCKTON',number:12,rarity:'legend',team:'UTA',tag:'FLOOR GENERAL',pose:'jumpman'},
+  // MYTHIC â€” pantheon
+  {first:'JULIUS',last:'ERVING',number:6,rarity:'mythic',team:'PHI',tag:'DR. J',pose:'jumpman'},
+  {first:'WILT',last:'CHAMBERLAIN',number:13,rarity:'mythic',team:'LAL',tag:'100-POINT GAME',pose:'skyhook'},
+  // MYTHIC additions
+  {first:'LARRY',last:'BIRD',number:33,rarity:'mythic',team:'BOS',tag:'LARRY LEGEND',pose:'jumpman'},
+  {first:'BILL',last:'RUSSELL',number:6,rarity:'mythic',team:'BOS',tag:'11 RINGS',pose:'skyhook'},
+  {first:'HAKEEM',last:'OLAJUWON',number:34,rarity:'mythic',team:'HOU',tag:'THE DREAM',pose:'skyhook'},
+  {first:'TIM',last:'DUNCAN',number:21,rarity:'mythic',team:'SAS',tag:'THE BIG FUNDAMENTAL',pose:'fadeaway'},
+  {first:'SHAQUILLE',last:'ONEAL',number:34,rarity:'mythic',team:'LAL',tag:'THE DIESEL',pose:'dunk'},
+  // LEGEND additions
+  {first:'PATRICK',last:'EWING',number:33,rarity:'legend',team:'NYK',tag:'HOYAS HEART',pose:'skyhook'},
+  {first:'DAVID',last:'ROBINSON',number:50,rarity:'legend',team:'SAS',tag:'THE ADMIRAL',pose:'dunk'},
+  {first:'KARL',last:'MALONE',number:32,rarity:'legend',team:'UTA',tag:'THE MAILMAN',pose:'dunk'},
+  {first:'SCOTTIE',last:'PIPPEN',number:33,rarity:'legend',team:'CHI',tag:'NO. 2 OPTION',pose:'jumpman'},
+  {first:'ISIAH',last:'THOMAS',number:11,rarity:'legend',team:'DET',tag:'BAD BOY',pose:'fadeaway'},
+  {first:'DWIGHT',last:'HOWARD',number:12,rarity:'legend',team:'ORL',tag:'SUPERMAN',pose:'dunk'},
+  {first:'PAUL',last:'PIERCE',number:34,rarity:'legend',team:'BOS',tag:'THE TRUTH',pose:'fadeaway'},
+  {first:'RAY',last:'ALLEN',number:20,rarity:'legend',team:'BOS',tag:'JESUS SHUTTLESWORTH',pose:'jumpman'},
+  // RARE additions
+  {first:'STEPHEN',last:'CURRY',number:30,rarity:'rare',team:'GSW',tag:'CHEF CURRY',pose:'jumpman'},
+  {first:'CARMELO',last:'ANTHONY',number:7,rarity:'rare',team:'NYK',tag:'MELO',pose:'fadeaway'},
+  {first:'CHRIS',last:'PAUL',number:3,rarity:'rare',team:'LAC',tag:'CP3',pose:'fadeaway'},
+  {first:'REGGIE',last:'MILLER',number:31,rarity:'rare',team:'IND',tag:'KNICK KILLER',pose:'jumpman'},
+  {first:'TONY',last:'PARKER',number:9,rarity:'rare',team:'SAS',tag:'TEARDROP',pose:'fadeaway'},
+];
+const TRADERS = [
+  {id:'steve',name:'Sneaky Steve',vibe:'LOWBALLER',color:'#f87171',emoji:'ðŸ¦Š',bio:'Always pricing high, offering low. Watch the fine print.',mood:'Eyeing your rosterâ€¦',
+    inventory:[
+      {id:'sv1',first:'ROBERT',last:'HORRY',number:5,pps:38,rarity:'uncommon',material:'silver',team:'LAL',tag:'BIG SHOT BOB',priceMod:1.4},
