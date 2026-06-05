@@ -942,7 +942,6 @@ function FriendTradeModal({me,friend,onClose,onSend,onToast}){
   const [theirCardIds,setTheirCardIds] = useState([]);
   const [yourPoints,setYourPoints] = useState(0);
   const [theirPoints,setTheirPoints] = useState(0);
-  const [tab,setTab] = useState('yours');
   const [message,setMessage] = useState('');
 
   const yourSel = me.ownedCards.filter(c=>yourCardIds.includes(c.id));
@@ -951,8 +950,10 @@ function FriendTradeModal({me,friend,onClose,onSend,onToast}){
   const theirVal = theirSel.reduce((s,c)=>s+getCardValue(c),0) + theirPoints;
   const fairness = yourVal===0 && theirVal===0 ? 0 : (yourVal-theirVal)/Math.max(theirVal,1);
 
-  const toggleYour = id => setYourCardIds(p=>p.includes(id)?p.filter(x=>x!==id):[...p,id]);
-  const toggleTheir = id => setTheirCardIds(p=>p.includes(id)?p.filter(x=>x!==id):[...p,id]);
+  const addYour = id => setYourCardIds(p=>p.includes(id)?p:([...p,id]));
+  const removeYour = id => setYourCardIds(p=>p.filter(x=>x!==id));
+  const addTheir = id => setTheirCardIds(p=>p.includes(id)?p:[...p,id]);
+  const removeTheir = id => setTheirCardIds(p=>p.filter(x=>x!==id));
 
   const send = () => {
     if((yourSel.length===0 && yourPoints===0) || (theirSel.length===0 && theirPoints===0)){ onToast('BOTH SIDES NEED SOMETHING','err'); return; }
