@@ -1580,7 +1580,7 @@ function AlienRoulette({card, packType, accent, onClose, onAddCard, wheelPool, o
     {stage === 'won' && <div style={{textAlign:'center',animation:'fade-in 400ms ease-out'}}>
       <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:36,letterSpacing:'0.24em',color:accent,marginBottom:18,textShadow:'0 0 36px ' + accent}}>YOU WON!</div>
       <div style={{padding:'28px 32px',borderRadius:20,background:'linear-gradient(135deg, ' + accent + '33, rgba(20,15,40,0.96))',border:'2px solid ' + accent,boxShadow:'0 0 60px ' + accent + '88, 0 12px 40px rgba(0,0,0,0.7)',marginBottom:22,minWidth:280,maxWidth:'90vw'}}>
-        <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:64,color:accent,lineHeight:1,textShadow:'0 0 20px ' + accent + '88'}}>{card.number}</div>
+
         <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:24,color:'#fff7ed',letterSpacing:'0.1em',marginTop:8}}>{card.first} {card.last}</div>
         <div style={{fontSize:11,color:'#a8a29e',letterSpacing:'0.18em',fontFamily:'"JetBrains Mono",monospace',marginTop:6}}>{card.team} | {(card.rarity || '').toUpperCase()}</div>
         {card.tag && <div style={{fontSize:10,color:accent,letterSpacing:'0.2em',marginTop:10,fontFamily:'"JetBrains Mono",monospace',fontStyle:'italic'}}>{card.tag}</div>}
@@ -2529,7 +2529,7 @@ function MoonCelebration({card,onDone}){
     <div style={{position:'absolute',top:'50%',left:'50%',width:60,height:60,borderRadius:'50%',border:'2px solid #c4b5fd',transform:'translate(-50%,-50%)',animation:'crater-ring 1800ms ease-out 750ms backwards'}}/>
     <div style={{animation:'crater-fall 700ms cubic-bezier(.5,.05,.3,1)'}}>
       <div style={{width:'min(220px, 60vw)',minWidth:180,padding:'24px 20px',borderRadius:14,background:'linear-gradient(135deg, rgba(254,240,138,0.25), rgba(20,15,40,0.9))',border:'2px solid #fef08a',boxShadow:'0 0 80px rgba(254,240,138,0.7), inset 0 0 40px rgba(254,240,138,0.2)',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',textAlign:'center'}}>
-        <div style={{fontSize:'min(56px, 16vw)',fontFamily:'"Bebas Neue",sans-serif',color:'#fef08a',lineHeight:1,textShadow:'0 0 20px rgba(254,240,138,0.8)'}}>{card.number}</div>
+
         <div style={{fontSize:'min(18px, 5vw)',fontFamily:'"Bebas Neue",sans-serif',color:'#fff7ed',letterSpacing:'0.1em',marginTop:8}}>{card.first} {card.last}</div>
         <div style={{fontSize:10,color:'#fef08a',letterSpacing:'0.2em',marginTop:6,fontFamily:'"JetBrains Mono",monospace'}}>FULL MOON</div>
       </div>
@@ -2884,7 +2884,7 @@ function BinderView({binder, me, onBack, onOpenCard, onPlaceCard, onRemoveCard})
     {menuSlot !== null && (()=>{ const mc = slots[menuSlot] ? cardById(slots[menuSlot]) : null; if(!mc){ return null; } return <div onClick={()=>setMenuSlot(null)} style={{position:'fixed',inset:0,zIndex:170,background:'rgba(0,0,0,0.85)',backdropFilter:'blur(8px)',display:'flex',alignItems:'center',justifyContent:'center',padding:18}}>
       <div onClick={e=>e.stopPropagation()} style={{width:'100%',maxWidth:300,background:'linear-gradient(180deg, #1a0f0a, #0c0907)',borderRadius:18,border:'1px solid rgba(255,255,255,0.12)',padding:18}}>
         <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:20,color:'#fff7ed',letterSpacing:'0.04em',textAlign:'center'}}>{mc.first} {mc.last}</div>
-        <div style={{fontSize:10,color:'#78716c',textAlign:'center',marginBottom:16,fontFamily:'"JetBrains Mono",monospace'}}>#{mc.number} - {mc.team||''}</div>
+        <div style={{fontSize:10,color:'#78716c',textAlign:'center',marginBottom:16,fontFamily:'"JetBrains Mono",monospace'}}>{mc.team||''}</div>
         <button onClick={()=>{ setMenuSlot(null); onOpenCard(mc); }} style={{width:'100%',marginBottom:8,padding:'11px',borderRadius:10,background:'rgba(96,165,250,0.12)',border:'1px solid rgba(96,165,250,0.35)',color:'#93c5fd',cursor:'pointer',fontFamily:'"Bebas Neue",sans-serif',fontSize:13,letterSpacing:'0.1em'}}>VIEW CARD</button>
         <button onClick={()=>{ onRemoveCard(binder.id, menuSlot); setMenuSlot(null); }} style={{width:'100%',marginBottom:8,padding:'11px',borderRadius:10,background:'rgba(248,113,113,0.12)',border:'1px solid rgba(248,113,113,0.35)',color:'#fca5a5',cursor:'pointer',fontFamily:'"Bebas Neue",sans-serif',fontSize:13,letterSpacing:'0.1em'}}>REMOVE FROM BINDER</button>
         <button onClick={()=>setMenuSlot(null)} style={{width:'100%',padding:'8px',borderRadius:10,background:'none',border:'none',color:'#78716c',cursor:'pointer',fontFamily:'"JetBrains Mono",monospace',fontSize:10,letterSpacing:'0.12em'}}>CLOSE</button>
