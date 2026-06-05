@@ -972,8 +972,8 @@ function FriendTradeModal({me,friend,onClose,onSend,onToast}){
         <button onClick={onClose} style={{background:'transparent',border:'none',color:'#a8a29e',cursor:'pointer',padding:4}}><X size={20}/></button>
       </div>
       <div style={{padding:'14px 20px',display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
-        <TradeSide label={`${friend.displayName.toUpperCase()} GIVES`} color={friend.color} cards={theirSel} points={theirPoints} value={Math.floor(theirVal)} onRemoveCard={id=>toggleTheir(id)} onPointsChange={setTheirPoints}/>
-        <TradeSide label="YOU GIVE" color="#fb923c" cards={yourSel} points={yourPoints} value={Math.floor(yourVal)} onRemoveCard={id=>toggleYour(id)} onPointsChange={setYourPoints} maxPoints={me.points}/>
+        <TradeSide label={`${friend.displayName.toUpperCase()} GIVES`} color={friend.color} cards={theirSel} points={theirPoints} value={Math.floor(theirVal)} onRemoveCard={id=>removeTheir(id)} onPointsChange={setTheirPoints}/>
+        <TradeSide label="YOU GIVE" color="#fb923c" cards={yourSel} points={yourPoints} value={Math.floor(yourVal)} onRemoveCard={id=>removeYour(id)} onPointsChange={setYourPoints} maxPoints={me.points}/>
       </div>
       <div style={{padding:'0 20px 6px'}}>
         <div style={{height:6,borderRadius:3,background:'rgba(255,255,255,0.06)',position:'relative',overflow:'hidden'}}>
