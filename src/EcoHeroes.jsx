@@ -841,7 +841,7 @@ function TradeTable({trader,ownedCards,points,onClose,onComplete,onToast}){
   const theirValue = theirSel.reduce((s,c)=>s+getCardValue(c)*(c.priceMod||1),0) + theirPoints;
   const fairness = yourValue===0 && theirValue===0 ? 0 : (yourValue-theirValue)/Math.max(theirValue,1);
 
-  const toggleYour = id => setYourCardIds(p=>p.includes(id)?p.filter(x=>x!==id):[...p,id]);
+  const toggleYour = id => { setYourCardIds(p=>{ const next = p.includes(id)?p.filter(x=>x!==id):[...p,id]; if(next.length>0) setTab('theirs'); return next; }); };
   const toggleTheir = id => setTheirCardIds(p=>p.includes(id)?p.filter(x=>x!==id):[...p,id]);
 
   const generateAIOffer = () => {
@@ -912,8 +912,12 @@ function TradeTable({trader,ownedCards,points,onClose,onComplete,onToast}){
       </div>
       <div style={{padding:'10px 20px',borderTop:'1px solid rgba(255,255,255,0.06)'}}>
         <div style={{display:'flex',gap:6,marginBottom:10}}>
-          <button onClick={()=>setTab('yours')} style={{padding:'5px 11px',borderRadius:6,border:'none',background:tab==='yours'?'rgba(255,107,0,0.2)':'rgba(255,255,255,0.04)',color:tab==='yours'?'#fb923c':'#a8a29e',fontFamily:'"Bebas Neue",sans-serif',fontSize:12,letterSpacing:'0.1em',cursor:'pointer'}}>YOUR ROSTER ({ownedCards.length})</button>
-          <button onClick={()=>setTab('theirs')} style={{padding:'5px 11px',borderRadius:6,border:'none',background:tab==='theirs'?`${trader.color}33`:'rgba(255,255,255,0.04)',color:tab==='theirs'?trader.color:'#a8a29e',fontFamily:'"Bebas Neue",sans-serif',fontSize:12,letterSpacing:'0.1em',cursor:'pointer'}}>THEIR INVENTORY ({trader.inventory.length})</button>
+          <button onClick={()=>setTab('yours')} style={{padding:'6px 12px',borderRadius:8,border:tab==='yours'?'2px solid #fb923c':'2px solid transparent',background:tab==='yours'?'rgba(251,146,60,0.18)':'rgba(255,255,255,0.04)',color:tab==='yours'?'#fb923c':'#a8a29e',fontFamily:'"Bebas Neue",sans-serif',fontSize:12,letterSpacing:'0.1em',cursor:'pointer',display:'flex',alignItems:'center',gap:5}}>
+            🦊 STEP 1: YOUR OFFER ({yourCardIds.length} selected)
+          </button>
+          <button onClick={()=>setTab('theirs')} style={{padding:'6px 12px',borderRadius:8,border:tab==='theirs'?`2px solid ${trader.color}`:'2px solid transparent',background:tab==='theirs'?`${trader.color}22`:'rgba(255,255,255,0.04)',color:tab==='theirs'?trader.color:'#a8a29e',fontFamily:'"Bebas Neue",sans-serif',fontSize:12,letterSpacing:'0.1em',cursor:'pointer',display:'flex',alignItems:'center',gap:5}}>
+            {trader.emoji} STEP 2: WHAT YOU WANT ({theirCardIds.length} selected)
+          </button>
         </div>
         <div style={{display:'flex',gap:8,overflowX:'auto',paddingBottom:8}}>
           {(tab==='yours'?ownedCards:trader.inventory).map(c=>{
@@ -946,7 +950,7 @@ function FriendTradeModal({me,friend,onClose,onSend,onToast}){
   const theirVal = theirSel.reduce((s,c)=>s+getCardValue(c),0) + theirPoints;
   const fairness = yourVal===0 && theirVal===0 ? 0 : (yourVal-theirVal)/Math.max(theirVal,1);
 
-  const toggleYour = id => setYourCardIds(p=>p.includes(id)?p.filter(x=>x!==id):[...p,id]);
+  const toggleYour = id => { setYourCardIds(p=>{ const next = p.includes(id)?p.filter(x=>x!==id):[...p,id]; if(next.length>0) setTab('theirs'); return next; }); };
   const toggleTheir = id => setTheirCardIds(p=>p.includes(id)?p.filter(x=>x!==id):[...p,id]);
 
   const send = () => {
@@ -982,8 +986,15 @@ function FriendTradeModal({me,friend,onClose,onSend,onToast}){
       </div>
       <div style={{padding:'10px 20px',borderTop:'1px solid rgba(255,255,255,0.06)'}}>
         <div style={{display:'flex',gap:6,marginBottom:10}}>
-          <button onClick={()=>setTab('yours')} style={{padding:'5px 11px',borderRadius:6,border:'none',background:tab==='yours'?'rgba(255,107,0,0.2)':'rgba(255,255,255,0.04)',color:tab==='yours'?'#fb923c':'#a8a29e',fontFamily:'"Bebas Neue",sans-serif',fontSize:12,letterSpacing:'0.1em',cursor:'pointer'}}>YOUR ROSTER ({me.ownedCards.length})</button>
-          <button onClick={()=>setTab('theirs')} style={{padding:'5px 11px',borderRadius:6,border:'none',background:tab==='theirs'?`${friend.color}33`:'rgba(255,255,255,0.04)',color:tab==='theirs'?friend.color:'#a8a29e',fontFamily:'"Bebas Neue",sans-serif',fontSize:12,letterSpacing:'0.1em',cursor:'pointer'}}>{friend.displayName.toUpperCase()}'S ROSTER ({friend.ownedCards.length})</button>
+          <button onClick={()=>setTab('yours')} style={{padding:'6px 12px',borderRadius:8,border:tab==='yours'?'2px solid #fb923c':'2px solid transparent',background:tab==='yours'?'rgba(251,146,60,0.18)':'rgba(255,255,255,0.04)',color:tab==='yours'?'#fb923c':'#a8a29e',fontFamily:'"Bebas Neue",sans-serif',fontSize:12,letterSpacing:'0.1em',cursor:'pointer',display:'flex',alignItems:'center',gap:5}}>
+            <span style={{fontSize:14}}>🦊</span> STEP 1: YOUR OFFER ({yourCardIds.length} selected)
+          </button>
+          <button onClick={()=>setTab('theirs')} style={{padding:'6px 12px',borderRadius:8,border:tab==='theirs'?`2px solid ${friend.color}`:'2px solid transparent',background:tab==='theirs'?`${friend.color}22`:'rgba(255,255,255,0.04)',color:tab==='theirs'?friend.color:'#a8a29e',fontFamily:'"Bebas Neue",sans-serif',fontSize:12,letterSpacing:'0.1em',cursor:'pointer',display:'flex',alignItems:'center',gap:5}}>
+            <span style={{fontSize:14}}>{friend.emoji}</span> STEP 2: WHAT YOU WANT ({theirCardIds.length} selected)
+          </button>
+        </div>
+        <div style={{fontSize:10,color:'#78716c',fontFamily:'"JetBrains Mono",monospace',letterSpacing:'0.1em',marginBottom:6,padding:'4px 8px',borderRadius:6,background:'rgba(255,255,255,0.03)'}}>
+          {tab==='yours' ? '👆 TAP YOUR ANIMALS TO OFFER THEM — then switch to STEP 2' : '👆 TAP THEIR ANIMALS THAT YOU WANT TO RECEIVE'}
         </div>
         <div style={{display:'flex',gap:8,overflowX:'auto',paddingBottom:8}}>
           {(tab==='yours'?me.ownedCards:friend.ownedCards).map(c=>{
