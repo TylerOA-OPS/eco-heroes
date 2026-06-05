@@ -841,7 +841,7 @@ function TradeTable({trader,ownedCards,points,onClose,onComplete,onToast}){
   const theirValue = theirSel.reduce((s,c)=>s+getCardValue(c)*(c.priceMod||1),0) + theirPoints;
   const fairness = yourValue===0 && theirValue===0 ? 0 : (yourValue-theirValue)/Math.max(theirValue,1);
 
-  const toggleYour = id => { setYourCardIds(p=>{ const next = p.includes(id)?p.filter(x=>x!==id):[...p,id]; if(next.length>0) setTab('theirs'); return next; }); };
+  const toggleYour = id => setYourCardIds(p=>p.includes(id)?p.filter(x=>x!==id):[...p,id]);
   const toggleTheir = id => setTheirCardIds(p=>p.includes(id)?p.filter(x=>x!==id):[...p,id]);
 
   const generateAIOffer = () => {
@@ -950,7 +950,7 @@ function FriendTradeModal({me,friend,onClose,onSend,onToast}){
   const theirVal = theirSel.reduce((s,c)=>s+getCardValue(c),0) + theirPoints;
   const fairness = yourVal===0 && theirVal===0 ? 0 : (yourVal-theirVal)/Math.max(theirVal,1);
 
-  const toggleYour = id => { setYourCardIds(p=>{ const next = p.includes(id)?p.filter(x=>x!==id):[...p,id]; if(next.length>0) setTab('theirs'); return next; }); };
+  const toggleYour = id => setYourCardIds(p=>p.includes(id)?p.filter(x=>x!==id):[...p,id]);
   const toggleTheir = id => setTheirCardIds(p=>p.includes(id)?p.filter(x=>x!==id):[...p,id]);
 
   const send = () => {
