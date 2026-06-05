@@ -16,6 +16,14 @@ function buildUser(profile, cardRows) {
     unlockedTracks: profile.unlocked_tracks || ['vibes','practice'],
     binderData: profile.binder_data || { binders: [], cardStates: {} },
     ownedCards: cardRows.map(rowToCard),
+    // ── Eco systems ──
+    greenhouses:    profile.greenhouses    || [],
+    materials:      profile.materials      || {},
+    expeditions:    profile.expeditions    || {},
+    cardHunger:     profile.card_hunger    || {},
+    cardInjury:     profile.card_injury    || {},
+    foodInventory:  profile.food_inventory || {},
+    vetInventory:   profile.vet_inventory  || {},
   };
 }
 

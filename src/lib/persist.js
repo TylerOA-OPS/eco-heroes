@@ -1,7 +1,17 @@
-// persist.js - Writes changes back to Supabase.
+// persist.js — Writes changes back to Supabase.
+//
+// IMPORTANT: roster persistence is SEPARATE from profile persistence.
+// - persistProfile: updates points/packs/daily/etc. only. Safe to
+//   call frequently (e.g. from the points ticker).
+// - persistRoster: atomically replaces the user's owned_cards. Called
+//   ONLY after deliberate card-changing actions (pack open, mint,
+//   sell, AI trade). Uses an RPC so DELETE+INSERT is one transaction.
+// - Trades go through sendTrade / updateTradeStatus / applyTradeAccept.
 
 import { supabase } from './supabase.js';
 
+// Update only the profile row (points, packs, daily, tracks).
+// Safe to call from the points ticker — does NOT touch cards.
 export async function persistProfile(user) {
   if (!user || !user.id) return;
   const { error } = await supabase
@@ -18,9 +28,14 @@ export async function persistProfile(user) {
   if (error) console.error('[persistProfile] failed:', error);
 }
 
+// Atomically replace the signed-in user's roster.
+// Refuses to commit an empty roster (safety net against bugs).
+// Caller is responsible for only calling this when cards actually changed.
 export async function persistRoster(user) {
   if (!user || !user.id) return;
   if (!Array.isArray(user.ownedCards) || user.ownedCards.length === 0) {
+    // Safety: never empty the roster automatically. If someone wants
+    // to sell their last card, we'd need a specific delete-one helper.
     console.warn('[persistRoster] refused: empty roster (safety guard)');
     return;
   }
@@ -29,16 +44,7 @@ export async function persistRoster(user) {
   if (error) console.error('[persistRoster] failed:', error);
 }
 
-export async function persistBinderData(user) {
-  if (!user || !user.id) return;
-  const data = user.binderData || { binders: [], cardStates: {} };
-  const { error } = await supabase
-    .from('profiles')
-    .update({ binder_data: data, updated_at: new Date().toISOString() })
-    .eq('id', user.id);
-  if (error) console.error('[persistBinderData] failed:', error);
-}
-
+// Combined: persist profile + roster. Use after any card-changing action.
 export async function persistUser(user) {
   await persistProfile(user);
   await persistRoster(user);
@@ -60,6 +66,7 @@ function cardToJson(card) {
   };
 }
 
+// Insert a new pending trade.
 export async function sendTrade(trade, fromUserId, toUserId) {
   const { error } = await supabase.from('pending_trades').insert({
     from_id: fromUserId,
@@ -74,6 +81,7 @@ export async function sendTrade(trade, fromUserId, toUserId) {
   if (error) throw error;
 }
 
+// Update a trade's status (rejected / canceled). For acceptance use applyTradeAccept.
 export async function updateTradeStatus(tradeId, status) {
   const { error } = await supabase
     .from('pending_trades')
@@ -82,6 +90,7 @@ export async function updateTradeStatus(tradeId, status) {
   if (error) throw error;
 }
 
+// Accept a trade: atomic across both users via SECURITY DEFINER RPC.
 export async function applyTradeAccept(tradeId, senderState, recipientState) {
   const { error } = await supabase.rpc('apply_trade_accept', {
     p_trade_id: tradeId,
@@ -110,6 +119,8 @@ function serializeUserState(user) {
   };
 }
 
+// Light refresh: fetch only the current user's profile + roster.
+// Used by manual pulls (e.g. inbox open) instead of refetching everyone.
 export async function loadMyProfileAndCards(userId) {
   const [pRes, cRes] = await Promise.all([
     supabase.from('profiles').select('*').eq('id', userId).single(),
@@ -120,6 +131,8 @@ export async function loadMyProfileAndCards(userId) {
   return { profile: pRes.data, cards: cRes.data || [] };
 }
 
+// Load only trades (cheap, ~6 rows). Used to refresh inbox without
+// disturbing in-memory rosters.
 export async function loadTradesOnly() {
   const { data, error } = await supabase
     .from('pending_trades')
@@ -128,3 +141,4 @@ export async function loadTradesOnly() {
   if (error) throw error;
   return data || [];
 }
+
