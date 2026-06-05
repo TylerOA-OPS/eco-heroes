@@ -922,7 +922,8 @@ function TradeTable({trader,ownedCards,points,onClose,onComplete,onToast}){
         <div style={{display:'flex',gap:8,overflowX:'auto',paddingBottom:8}}>
           {(tab==='yours'?ownedCards:trader.inventory).map(c=>{
             const sel = tab==='yours'?yourCardIds.includes(c.id):theirCardIds.includes(c.id);
-            return <MiniCard key={c.id} card={c} selected={sel} onClick={()=>tab==='yours'?toggleYour(c.id):toggleTheir(c.id)}/>;
+            if(tab==='yours') return <MiniCard key={c.id} card={c} selected={sel} onClick={()=>toggleYour(c.id)}/>;
+            return <MiniCard key={c.id} card={c} selected={sel} onClick={()=>toggleTheir(c.id)}/>;
           })}
         </div>
       </div>
@@ -999,7 +1000,8 @@ function FriendTradeModal({me,friend,onClose,onSend,onToast}){
         <div style={{display:'flex',gap:8,overflowX:'auto',paddingBottom:8}}>
           {(tab==='yours'?me.ownedCards:friend.ownedCards).map(c=>{
             const sel = tab==='yours'?yourCardIds.includes(c.id):theirCardIds.includes(c.id);
-            return <MiniCard key={c.id} card={c} selected={sel} onClick={()=>tab==='yours'?toggleYour(c.id):toggleTheir(c.id)}/>;
+            if(tab==='yours') return <MiniCard key={c.id} card={c} selected={sel} onClick={()=>toggleYour(c.id)}/>;
+            return <MiniCard key={c.id} card={c} selected={sel} onClick={()=>toggleTheir(c.id)}/>;
           })}
         </div>
       </div>
