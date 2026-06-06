@@ -1882,9 +1882,10 @@ function GoatPickerScreen({me, onPickGoat}){
   return <div style={{minHeight:'100vh',width:'100%',background:`radial-gradient(ellipse at 30% 20%, rgba(10,80,40,0.35) 0%, transparent 50%),radial-gradient(ellipse at 70% 20%, rgba(15,110,86,0.25) 0%, transparent 50%),radial-gradient(ellipse at 50% 100%, rgba(74,222,128,0.1) 0%, transparent 60%),linear-gradient(180deg, #060f08, #030a05)`,padding:'28px 20px 32px',fontFamily:'"Outfit",sans-serif',display:'flex',flexDirection:'column',alignItems:'center'}}>
     {/* Header � the badge is the brand */}
     <div style={{textAlign:'center',marginBottom:14,display:'flex',flexDirection:'column',alignItems:'center'}}>
-      <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:14,color:'#a8a29e',letterSpacing:'0.32em',marginBottom:10}}>WELCOME {me.displayName.toUpperCase()} � PLAY!! stamp */}
+      <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:14,color:'#a8a29e',letterSpacing:'0.32em',marginBottom:10}}>WELCOME {me.displayName.toUpperCase()}</div>
+    {/* PLAY!! stamp */}
     <div style={{display:'inline-flex',alignItems:'center',gap:10,padding:'10px 28px',borderRadius:14,background:'linear-gradient(135deg, #22c55e, #15803d)',color:'#f0fdf4',fontFamily:'"Bebas Neue",sans-serif',fontSize:32,letterSpacing:'0.12em',boxShadow:'0 8px 28px rgba(74,222,128,0.4), inset 0 -3px 0 rgba(0,0,0,0.3)',marginBottom:10,transform:'rotate(-2deg)'}}>
-      P � L � A � Y <span style={{fontSize:38,marginLeft:4}}>!!</span>
+      PLAY <span style={{fontSize:38,marginLeft:4}}>!!</span>
     </div>
     <div style={{fontSize:11,color:'#a8a29e',letterSpacing:'0.18em',fontFamily:'"JetBrains Mono",monospace',marginBottom:24}}>CHOOSE YOUR ECO SPIRIT</div>
 
@@ -1992,7 +1993,7 @@ function LoginScreen({users,onLogin,loading}){
     </div>
     {/* PLAY!! stamp */}
     <div style={{display:'inline-flex',alignItems:'center',gap:10,padding:'10px 28px',borderRadius:14,background:'linear-gradient(135deg, #22c55e, #15803d)',color:'#f0fdf4',fontFamily:'"Bebas Neue",sans-serif',fontSize:32,letterSpacing:'0.12em',boxShadow:'0 8px 28px rgba(74,222,128,0.4), inset 0 -3px 0 rgba(0,0,0,0.3)',marginBottom:10,transform:'rotate(-2deg)'}}>
-      P � L � A � Y <span style={{fontSize:38,marginLeft:4}}>!!</span>
+      PLAY <span style={{fontSize:38,marginLeft:4}}>!!</span>
     </div>
     <div style={{fontSize:11,color:'#a8a29e',letterSpacing:'0.18em',fontFamily:'"JetBrains Mono",monospace',marginBottom:24}}>PICK YOUR SPIRIT ANIMAL � BUILD THE COLLECTION</div>
 
