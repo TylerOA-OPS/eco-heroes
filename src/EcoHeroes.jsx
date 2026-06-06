@@ -211,34 +211,34 @@ const TYLER_ROSTER = [
   {id:'ty_c5',first:'RUSTY',last:'FOX',number:9,pps:72,rarity:'rare',material:'gold',team:'FOREST',tag:'CLEVER TRICKSTER',pose:'fadeaway'},
   {id:'ty_c6',first:'ATLAS',last:'BEAR',number:33,pps:85,rarity:'legend',material:'silver',team:'FOREST',tag:'FOREST GIANT',pose:'dunk'},
   {id:'ty_c7',first:'STRIPE',last:'BADGER',number:14,pps:58,rarity:'rare',material:'bronze',team:'FOREST',tag:'FIERCE DIGGER',pose:'fadeaway'},
-  {id:'ty_c8',first:'ROCKY',last:'RACCOON',number:7,pps:18,rarity:'common',material:'silver',team:'FOREST',tag:'NIGHT BANDIT'},
-  {id:'ty_c9',first:'WHISKER',last:'OTTER',number:5,pps:42,rarity:'uncommon',material:'gold',team:'WETLAND',tag:'BELLY SURFER'},
-  {id:'ty_c10',first:'PIP',last:'CHIPMUNK',number:1,pps:6,rarity:'common',material:'bronze',team:'FOREST',tag:'CHEEK STUFFER'},
+  {id:'ty_c8',first:'ROCKY',last:'RACCOON',number:7,pps:18,rarity:'common',material:'silver',team:'FOREST',tag:'NIGHT BANDIT',pose:'jumpman'},
+  {id:'ty_c9',first:'WHISKER',last:'OTTER',number:5,pps:42,rarity:'uncommon',material:'gold',team:'WETLAND',tag:'BELLY SURFER',pose:'skyhook'},
+  {id:'ty_c10',first:'PIP',last:'CHIPMUNK',number:1,pps:6,rarity:'common',material:'bronze',team:'FOREST',tag:'CHEEK STUFFER',pose:'jumpman'},
 ];
 const CARTER_ROSTER = [
   {id:'cr_c1',first:'LEVIATHAN',last:'WHALE',number:100,pps:118,rarity:'mythic',material:'diamond',team:'OCEAN',tag:'OCEAN TITAN',pose:'skyhook'},
   {id:'cr_c2',first:'GAIA',last:'GORILLA',number:8,pps:90,rarity:'legend',material:'gold',team:'RAINFOREST',tag:'JUNGLE GUARDIAN',pose:'jumpman'},
   {id:'cr_c3',first:'SPIRIT',last:'WOLF',number:6,pps:95,rarity:'legend',material:'gold',team:'TUNDRA',tag:'WHITE GHOST',pose:'jumpman'},
   {id:'cr_c4',first:'COSMOS',last:'OWL',number:6,pps:122,rarity:'mythic',material:'platinum',team:'FOREST',tag:'NIGHT ORACLE',pose:'fadeaway'},
-  {id:'cr_c5',first:'BUDDY',last:'BEAVER',number:8,pps:28,rarity:'uncommon',material:'bronze',team:'WETLAND',tag:'DAM BUILDER'},
+  {id:'cr_c5',first:'BUDDY',last:'BEAVER',number:8,pps:28,rarity:'uncommon',material:'bronze',team:'WETLAND',tag:'DAM BUILDER',pose:'dunk'},
 ];
 const PACK_POOL = [
   // COMMON - small/common creatures
   {first:'ROCKY',last:'RACCOON',number:7,rarity:'common',team:'FOREST',tag:'NIGHT BANDIT'},
-  {first:'DAISY',last:'SQUIRREL',number:2,rarity:'common',team:'FOREST',tag:'NUT GATHERER'},
+  {first:'DAISY',last:'SQUIRREL',pose:'jumpman',number:2,rarity:'common',team:'FOREST',tag:'NUT GATHERER'},
   {first:'PIP',last:'CHIPMUNK',number:1,rarity:'common',team:'FOREST',tag:'CHEEK STUFFER'},
   {first:'HAZEL',last:'HEDGEHOG',number:4,rarity:'common',team:'FOREST',tag:'PRICKLY BALL'},
   {first:'BUDDY',last:'BEAVER',number:8,rarity:'common',team:'WETLAND',tag:'DAM BUILDER'},
   // UNCOMMON - quirky/cool
-  {first:'WHISKER',last:'OTTER',number:5,rarity:'uncommon',team:'WETLAND',tag:'BELLY SURFER'},
-  {first:'RUBY',last:'CARDINAL',number:3,rarity:'uncommon',team:'FOREST',tag:'CRIMSON FLASH'},
+  {first:'WHISKER',last:'OTTER',pose:'skyhook',number:5,rarity:'uncommon',team:'WETLAND',tag:'BELLY SURFER'},
+  {first:'RUBY',last:'CARDINAL',pose:'jumpman',number:3,rarity:'uncommon',team:'FOREST',tag:'CRIMSON FLASH'},
   {first:'SAGE',last:'SKUNK',number:6,rarity:'uncommon',team:'FOREST',tag:'STINK MASTER'},
-  {first:'PICO',last:'PORCUPINE',number:9,rarity:'uncommon',team:'FOREST',tag:'NEEDLE GUARD'},
+  {first:'PICO',last:'PORCUPINE',pose:'fadeaway',number:9,rarity:'uncommon',team:'FOREST',tag:'NEEDLE GUARD'},
   // RARE - mid-tier
   {first:'MOCHA',last:'MOOSE',number:12,rarity:'rare',team:'TUNDRA',tag:'ANTLER GIANT',pose:'skyhook'},
   {first:'ECHO',last:'WOLF',number:11,rarity:'rare',team:'FOREST',tag:'PACK CALLER',pose:'jumpman'},
   {first:'STRIPE',last:'BADGER',number:14,rarity:'rare',team:'FOREST',tag:'FIERCE DIGGER',pose:'fadeaway'},
-  {first:'CORAL',last:'OCTOPUS',number:8,rarity:'rare',team:'OCEAN',tag:'EIGHT-ARM MIND'},
+  {first:'CORAL',last:'OCTOPUS',pose:'skyhook',number:8,rarity:'rare',team:'OCEAN',tag:'EIGHT-ARM MIND'},
   {first:'RUSTY',last:'FOX',number:9,rarity:'rare',team:'FOREST',tag:'CLEVER TRICKSTER',pose:'fadeaway'},
   // OLDSCHOOL - endangered species
   {first:'BAMBOO',last:'PANDA',number:1,rarity:'oldschool',team:'RAINFOREST',tag:'BLACK AND WHITE',pose:'jumpman'},
@@ -291,11 +291,11 @@ const STARTING_USERS = {
 // Bronze-only starter for future new accounts (account creation still disabled).
 // Real low-key NBA players so they're authentic, just not superstars.
 const NEW_USER_STARTER = [
-  {id:'ns_c1',first:'ROCKY',last:'RACCOON',number:7,pps:6,rarity:'common',material:'bronze',team:'FOREST',tag:'NIGHT BANDIT'},
-  {id:'ns_c2',first:'DAISY',last:'SQUIRREL',number:2,pps:7,rarity:'common',material:'bronze',team:'FOREST',tag:'NUT GATHERER'},
-  {id:'ns_c3',first:'HAZEL',last:'HEDGEHOG',number:4,pps:8,rarity:'common',material:'bronze',team:'FOREST',tag:'PRICKLY BALL'},
-  {id:'ns_c4',first:'BUDDY',last:'BEAVER',number:8,pps:9,rarity:'common',material:'bronze',team:'WETLAND',tag:'DAM BUILDER'},
-  {id:'ns_c5',first:'PIP',last:'CHIPMUNK',number:1,pps:11,rarity:'common',material:'bronze',team:'FOREST',tag:'CHEEK STUFFER'},
+  {id:'ns_c1',first:'ROCKY',last:'RACCOON',number:7,pps:6,rarity:'common',material:'bronze',team:'FOREST',tag:'NIGHT BANDIT',pose:'jumpman'},
+  {id:'ns_c2',first:'DAISY',last:'SQUIRREL',number:2,pps:7,rarity:'common',material:'bronze',team:'FOREST',tag:'NUT GATHERER',pose:'jumpman'},
+  {id:'ns_c3',first:'HAZEL',last:'HEDGEHOG',number:4,pps:8,rarity:'common',material:'bronze',team:'FOREST',tag:'PRICKLY BALL',pose:'fadeaway'},
+  {id:'ns_c4',first:'BUDDY',last:'BEAVER',number:8,pps:9,rarity:'common',material:'bronze',team:'WETLAND',tag:'DAM BUILDER',pose:'dunk'},
+  {id:'ns_c5',first:'PIP',last:'CHIPMUNK',number:1,pps:11,rarity:'common',material:'bronze',team:'FOREST',tag:'CHEEK STUFFER',pose:'skyhook'},
 ];
 
 // Music tracks (synthesized live via Tone.js � no external audio files)
