@@ -678,7 +678,7 @@ function CardDetailModal({card,onClose,onSell,isMine=true,onEdit,binders,onAddTo
           <div style={{width:'100%',display:'flex',flexDirection:'column',gap:4,padding:'8px 10px',borderRadius:10,background:'rgba(134,239,172,0.06)',border:'1px solid rgba(134,239,172,0.2)'}}>
             <div style={{fontSize:9,color:'#86efac',letterSpacing:'0.15em',fontFamily:'"JetBrains Mono",monospace',textAlign:'center',marginBottom:2}}>🌿 ADD TO SHELTER</div>
             {shelters.map((sh,i)=>{
-              const sz=GREENHOUSE_SIZES[sh.size];
+              const sz=SHELTER_SIZES[sh.size];
               const already=(sh.animals||[]).includes(card.id);
               const full=(sh.animals||[]).length>=(sz?sz.slots:4);
               return(
