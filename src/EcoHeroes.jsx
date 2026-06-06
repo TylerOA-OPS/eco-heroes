@@ -3523,7 +3523,7 @@ export default function EcoHome({ session }){
       else{animals=animals.filter(function(id){return id!==cardId;});}
       return Object.assign({},gh,{animals:animals});
     });
-    updateUser(me.username,function(u){return Object.assign({},u,{shelters:newGhs});});
+    updateUser(me.username,function(u){var updated=Object.assign({},u,{shelters:newGhs});persistProfile(updated);return updated;});
     showToast(assign?'Animal added to shelter!':'Animal removed.','ok');
   };
   const handleBuildShelter=(size)=>{
@@ -3534,7 +3534,7 @@ export default function EcoHome({ session }){
     if(!ok){showToast('Not enough materials!','err');return;}
     ['wood','stone','glass','brick'].forEach(m=>{nm[m]=(nm[m]||0)-sz[m];});
     const ng=[...(me.shelters||[]),{size,builtAt:Date.now()}];
-    updateUser(me.username,u=>({...u,materials:nm,shelters:ng}));
+    updateUser(me.username,u=>{const updated={...u,materials:nm,shelters:ng};persistProfile(updated);return updated;});
     showToast(sz.label+' shelter built! +'+sz.eco+' ECO/sec','ok');
   };
 
