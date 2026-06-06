@@ -541,13 +541,16 @@ function MaterialBadge({material,small,large}){
 /* PLAYER CARD */
 function PlayerCard({card,hovered,onHover,onLeave,onClick,damage=0}){
   const r = RARITIES[card.rarity];
+  // Fallback: look up pose from PACK_POOL if card has no pose
+  const cardWithPose = card.pose ? card : {...card, pose: (PACK_POOL.find(p=>p.first===card.first&&p.last===card.last)||{}).pose};
+  const effectiveCard = cardWithPose;
   const m = MATERIALS[card.material||'bronze'];
   const hue = getCardHue(card);
   const isMythic = card.rarity==='mythic';
   const isLegend = card.rarity==='legend';
   const isSn = (card.material||'bronze')==='supernova';
-  const hasPose = card.pose && POSE_PORTRAITS[card.pose];
-  const Pose = hasPose ? POSE_PORTRAITS[card.pose] : null;
+  const hasPose = effectiveCard.pose && POSE_PORTRAITS[effectiveCard.pose];
+  const Pose = hasPose ? POSE_PORTRAITS[effectiveCard.pose] : null;
   return <div onMouseEnter={onHover} onMouseLeave={onLeave} onClick={onClick} style={{position:'relative',aspectRatio:'5 / 7',borderRadius:14,cursor:'pointer',transform:hovered?'translateY(-6px) rotate(-0.5deg)':'translateY(0)',transition:'transform 350ms cubic-bezier(.2,.8,.2,1), box-shadow 350ms',boxShadow:hovered?`0 24px 60px -10px ${m.glow}, 0 0 0 2px ${m.color}, inset 0 0 60px rgba(0,0,0,0.4)`:`0 8px 24px -6px rgba(0,0,0,0.6), 0 0 0 1.5px ${m.color}cc, inset 0 0 40px rgba(0,0,0,0.5)`,background:`linear-gradient(155deg, hsl(${hue} 70% 22%) 0%, hsl(${hue} 60% 8%) 100%)`,overflow:'hidden'}}>
     {isSn && <div style={{position:'absolute',inset:0,pointerEvents:'none',background:'linear-gradient(115deg, transparent 20%, rgba(236,72,153,0.25) 35%, rgba(168,85,247,0.3) 50%, rgba(59,130,246,0.25) 65%, transparent 80%)',mixBlendMode:'overlay',animation:'sheen 2.5s ease-in-out infinite'}}/>}
     {isMythic && !isSn && <div style={{position:'absolute',inset:0,pointerEvents:'none',background:'linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.18) 45%, rgba(255,200,80,0.25) 50%, rgba(255,255,255,0.18) 55%, transparent 70%)',mixBlendMode:'overlay',animation:'sheen 3.5s ease-in-out infinite'}}/>}
