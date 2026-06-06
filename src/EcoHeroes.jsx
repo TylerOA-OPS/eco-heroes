@@ -189,7 +189,7 @@ const ANIMAL_FACTS = {
   'AURORA SWAN':['Mates for life — mourns a lost partner','Can fly up to 95 km/h','Nest size can reach 1.8m wide','Young called cygnets — grey for first year','Has the most feathers of any bird species'],
   'MUFASA LION':['Only social cat — lives in prides','Roar can be heard from 8km away','Sleeps up to 20 hours per day','Has retractable claws — kept sharp for hunting','Males grow distinctive manes by age 3'],
   'TUSK ELEPHANT':['Largest land animal on Earth','Can recognize themselves in a mirror','Mourns its dead — returns to visit bones','Communicates through vibrations felt through feet','Memory is extraordinary — never forgets a face'],
-  'ZEUS EAGLE':['Eyesight is 4-8× stronger than a humans','Dives at over 160 km/h to catch prey','Mates for life and returns to same nest each year','Nest can weigh over 900kg after years of building','Symbol of power in over 25 national flags'],
+  'ZEUS EAGLE':['Eyesight is 4-8× stronger than a human's','Dives at over 160 km/h to catch prey','Mates for life and returns to same nest each year','Nest can weigh over 900kg after years of building','Symbol of power in over 25 national flags'],
   'ECHO WOLF':['Howls to communicate across vast distances','Plays to strengthen pack social bonds','Paws have webbing between toes for swimming','Navigates using an internal magnetic compass','Responsible for restoring balance to Yellowstone'],
   'ATLAS BEAR':['Can smell food from 20km away','Runs up to 55 km/h — faster than a horse','Hibernates up to 7 months a year','Has the strongest bite force of any land predator','Extremely intelligent — uses tools in captivity'],
   'STRIPE BADGER':['Can dig faster than a human can with a shovel','Fearless — will defend itself against lions','Has remarkably tough skin — very hard to bite through','Honey badger is its close relative','Plays dead convincingly to escape predators'],
@@ -548,16 +548,15 @@ function MaterialBadge({material,small,large}){
 /* PLAYER CARD */
 function PlayerCard({card,hovered,onHover,onLeave,onClick,damage=0}){
   const r = RARITIES[card.rarity];
-  // Fallback: look up pose from PACK_POOL if card has no pose
-  const cardWithPose = card.pose ? card : {...card, pose: (PACK_POOL.find(p=>p.first===card.first&&p.last===card.last)||{}).pose};
-  const effectiveCard = cardWithPose;
+  const _pose = card.pose || (PACK_POOL.find(function(p){return p.first===card.first&&p.last===card.last;})||{}).pose;
+  const card2 = _pose && !card.pose ? Object.assign({},card,{pose:_pose}) : card;
   const m = MATERIALS[card.material||'bronze'];
   const hue = getCardHue(card);
   const isMythic = card.rarity==='mythic';
   const isLegend = card.rarity==='legend';
   const isSn = (card.material||'bronze')==='supernova';
-  const hasPose = effectiveCard.pose && POSE_PORTRAITS[effectiveCard.pose];
-  const Pose = hasPose ? POSE_PORTRAITS[effectiveCard.pose] : null;
+  const hasPose = card2.pose && POSE_PORTRAITS[card2.pose];
+  const Pose = hasPose ? POSE_PORTRAITS[card2.pose] : null;
   return <div onMouseEnter={onHover} onMouseLeave={onLeave} onClick={onClick} style={{position:'relative',aspectRatio:'5 / 7',borderRadius:14,cursor:'pointer',transform:hovered?'translateY(-6px) rotate(-0.5deg)':'translateY(0)',transition:'transform 350ms cubic-bezier(.2,.8,.2,1), box-shadow 350ms',boxShadow:hovered?`0 24px 60px -10px ${m.glow}, 0 0 0 2px ${m.color}, inset 0 0 60px rgba(0,0,0,0.4)`:`0 8px 24px -6px rgba(0,0,0,0.6), 0 0 0 1.5px ${m.color}cc, inset 0 0 40px rgba(0,0,0,0.5)`,background:`linear-gradient(155deg, hsl(${hue} 70% 22%) 0%, hsl(${hue} 60% 8%) 100%)`,overflow:'hidden'}}>
     {isSn && <div style={{position:'absolute',inset:0,pointerEvents:'none',background:'linear-gradient(115deg, transparent 20%, rgba(236,72,153,0.25) 35%, rgba(168,85,247,0.3) 50%, rgba(59,130,246,0.25) 65%, transparent 80%)',mixBlendMode:'overlay',animation:'sheen 2.5s ease-in-out infinite'}}/>}
     {isMythic && !isSn && <div style={{position:'absolute',inset:0,pointerEvents:'none',background:'linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.18) 45%, rgba(255,200,80,0.25) 50%, rgba(255,255,255,0.18) 55%, transparent 70%)',mixBlendMode:'overlay',animation:'sheen 3.5s ease-in-out infinite'}}/>}
