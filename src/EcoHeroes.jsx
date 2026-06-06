@@ -175,10 +175,10 @@ const ANIMAL_FACTS = {
   'BAMBOO PANDA':['Eats up to 38kg of bamboo per day','Has a false thumb — an enlarged wrist bone','Can swim and climb trees expertly','Cubs are born the size of a stick of butter','Black-and-white pattern helps with temperature control'],
   'DAISY SQUIRREL':['Buries thousands of nuts per season — and forgets most','Can find food buried under a foot of snow','Teeth never stop growing throughout life','Can fall from 30m and land safely','Communicates danger with unique tail flicks'],
   'HAZEL HEDGEHOG':['Has up to 7,000 spines on its body','Rolls into a perfect ball when threatened','Eats beetles, slugs and caterpillars','Hibernates through winter months','Surprisingly fast — can run 2km per hour'],
-  'RUSTY FOX':['Remembers the location of thousands of food caches','Can hear a mouse under 3 feet of snow','Runs up to 50 km/h in short bursts','Uses Earths magnetic field to hunt','Has vertical pupils like a cat'],
-  'WHISKER OTTER':['Holds hands while sleeping so they dont drift apart','Uses rocks as tools to crack open shellfish','Has the densest fur of any mammal — 1M hairs per sq inch','Can hold its breath for 8 minutes','Plays games for fun — a sign of high intelligence'],
+  'RUSTY FOX':['Remembers the location of thousands of food caches','Can hear a mouse under 3 feet of snow','Runs up to 50 km/h in short bursts','Uses Eart magnetic field to hunt','Has vertical pupils like a cat'],
+  'WHISKER OTTER':['Holds hands while sleeping so they do drift apart','Uses rocks as tools to crack open shellfish','Has the densest fur of any mammal — 1M hairs per sq inch','Can hold its breath for 8 minutes','Plays games for fun — a sign of high intelligence'],
   'BUDDY BEAVER':['Builds dams that can flood entire forests','Teeth are orange due to iron-reinforced enamel','Can hold its breath for 15 minutes','Second largest rodent on Earth','Creates its own wetland ecosystem'],
-  'PICO PORCUPINE':['Has over 30,000 quills — each barbed like a fishhook','Quills grow back after being lost','Cannot shoot quills — they detach on contact','Quills contain antibiotics to prevent self infection','Excellent climbers despite their size'],
+  'PICO PORCUPINE':['Has over 30,000 quills — each barbed like a fishhook','Quills grow back after being lost','Ca shoot quills — they detach on contact','Quills contain antibiotics to prevent self-infection','Excellent climbers despite their size'],
   'SWIFT MEERKAT':['Immune to venom — eats scorpions for breakfast','Takes turns acting as sentinel on watch duty','Teaches pups how to handle dangerous prey','Can detect predators from over 300m away','Lives in groups of up to 30 individuals'],
   'LUNA WOLF':['Can howl loud enough to be heard 10km away','Mates for life in most cases','Packs have complex social hierarchies','Runs up to 60 km/h when hunting','Responsible for reshaping entire river ecosystems'],
   'TITAN TORTOISE':['Can live over 150 years','Goes months without food or water','Grows its entire life — never stops','Shell is part of its spine — cannot leave it','One of the few truly ancient creatures still alive'],
@@ -211,41 +211,34 @@ const TYLER_ROSTER = [
   {id:'ty_c5',first:'RUSTY',last:'FOX',number:9,pps:72,rarity:'rare',material:'gold',team:'FOREST',tag:'CLEVER TRICKSTER',pose:'fadeaway'},
   {id:'ty_c6',first:'ATLAS',last:'BEAR',number:33,pps:85,rarity:'legend',material:'silver',team:'FOREST',tag:'FOREST GIANT',pose:'dunk'},
   {id:'ty_c7',first:'STRIPE',last:'BADGER',number:14,pps:58,rarity:'rare',material:'bronze',team:'FOREST',tag:'FIERCE DIGGER',pose:'fadeaway'},
-  {id:'ty_c8',first:'ROCKY',last:'RACCOON',number:7,pps:18,rarity:'common',material:'silver',team:'FOREST',tag:'NIGHT BANDIT',pose:'jumpman'},
-  {id:'ty_c9',first:'WHISKER',last:'OTTER',number:5,pps:42,rarity:'uncommon',material:'gold',team:'WETLAND',tag:'BELLY SURFER',pose:'skyhook'},
-  {id:'ty_c10',first:'PIP',last:'CHIPMUNK',number:1,pps:6,rarity:'common',material:'bronze',team:'FOREST',tag:'CHEEK STUFFER',pose:'jumpman'},
+  {id:'ty_c8',first:'ROCKY',last:'RACCOON',number:7,pps:18,rarity:'common',material:'silver',team:'FOREST',tag:'NIGHT BANDIT'},
+  {id:'ty_c9',first:'WHISKER',last:'OTTER',number:5,pps:42,rarity:'uncommon',material:'gold',team:'WETLAND',tag:'BELLY SURFER'},
+  {id:'ty_c10',first:'PIP',last:'CHIPMUNK',number:1,pps:6,rarity:'common',material:'bronze',team:'FOREST',tag:'CHEEK STUFFER'},
 ];
 const CARTER_ROSTER = [
   {id:'cr_c1',first:'LEVIATHAN',last:'WHALE',number:100,pps:118,rarity:'mythic',material:'diamond',team:'OCEAN',tag:'OCEAN TITAN',pose:'skyhook'},
   {id:'cr_c2',first:'GAIA',last:'GORILLA',number:8,pps:90,rarity:'legend',material:'gold',team:'RAINFOREST',tag:'JUNGLE GUARDIAN',pose:'jumpman'},
   {id:'cr_c3',first:'SPIRIT',last:'WOLF',number:6,pps:95,rarity:'legend',material:'gold',team:'TUNDRA',tag:'WHITE GHOST',pose:'jumpman'},
   {id:'cr_c4',first:'COSMOS',last:'OWL',number:6,pps:122,rarity:'mythic',material:'platinum',team:'FOREST',tag:'NIGHT ORACLE',pose:'fadeaway'},
-  {id:'cr_c5',first:'BUDDY',last:'BEAVER',number:8,pps:28,rarity:'uncommon',material:'bronze',team:'WETLAND',tag:'DAM BUILDER',pose:'dunk'},
+  {id:'cr_c5',first:'BUDDY',last:'BEAVER',number:8,pps:28,rarity:'uncommon',material:'bronze',team:'WETLAND',tag:'DAM BUILDER'},
 ];
 const PACK_POOL = [
   // COMMON - small/common creatures
   {first:'ROCKY',last:'RACCOON',number:7,rarity:'common',team:'FOREST',tag:'NIGHT BANDIT'},
-  {first:'DAISY',last:'SQUIRREL',pose:'jumpman',number:2,rarity:'common',team:'FOREST',tag:'NUT GATHERER'},
+  {first:'DAISY',last:'SQUIRREL',number:2,rarity:'common',team:'FOREST',tag:'NUT GATHERER'},
   {first:'PIP',last:'CHIPMUNK',number:1,rarity:'common',team:'FOREST',tag:'CHEEK STUFFER'},
   {first:'HAZEL',last:'HEDGEHOG',number:4,rarity:'common',team:'FOREST',tag:'PRICKLY BALL'},
   {first:'BUDDY',last:'BEAVER',number:8,rarity:'common',team:'WETLAND',tag:'DAM BUILDER'},
   // UNCOMMON - quirky/cool
-  {first:'WHISKER',last:'OTTER',pose:'skyhook',number:5,rarity:'uncommon',team:'WETLAND',tag:'BELLY SURFER'},
-  {first:'RUBY',last:'CARDINAL',pose:'jumpman',number:3,rarity:'uncommon',team:'FOREST',tag:'CRIMSON FLASH'},
+  {first:'WHISKER',last:'OTTER',number:5,rarity:'uncommon',team:'WETLAND',tag:'BELLY SURFER'},
+  {first:'RUBY',last:'CARDINAL',number:3,rarity:'uncommon',team:'FOREST',tag:'CRIMSON FLASH'},
   {first:'SAGE',last:'SKUNK',number:6,rarity:'uncommon',team:'FOREST',tag:'STINK MASTER'},
-  {first:'PICO',last:'PORCUPINE',pose:'fadeaway',number:9,rarity:'uncommon',team:'FOREST',tag:'NEEDLE GUARD'},
+  {first:'PICO',last:'PORCUPINE',number:9,rarity:'uncommon',team:'FOREST',tag:'NEEDLE GUARD'},
   // RARE - mid-tier
-  {first:'BUDDY',last:'BEAVER',number:8,pps:9,rarity:'common',team:'WETLAND',tag:'DAM BUILDER',pose:'dunk'},
-  {first:'DAISY',last:'SQUIRREL',pose:'jumpman',number:2,pps:7,rarity:'common',team:'FOREST',tag:'NUT GATHERER',pose:'jumpman'},
-  {first:'HAZEL',last:'HEDGEHOG',number:4,pps:8,rarity:'common',team:'FOREST',tag:'PRICKLY BALL',pose:'fadeaway'},
-  {first:'PIP',last:'CHIPMUNK',number:1,pps:6,rarity:'common',team:'FOREST',tag:'CHEEK STUFFER',pose:'skyhook'},
-  {first:'ROCKY',last:'RACCOON',number:7,pps:6,rarity:'common',team:'FOREST',tag:'NIGHT BANDIT',pose:'jumpman'},
-  {first:'WHISKER',last:'OTTER',pose:'skyhook',number:5,pps:11,rarity:'uncommon',team:'WETLAND',tag:'BELLY SURFER',pose:'skyhook'},
-  {first:'PICO',last:'PORCUPINE',pose:'fadeaway',number:3,pps:24,rarity:'uncommon',team:'FOREST',tag:'NEEDLE GUARD',pose:'fadeaway'},
   {first:'MOCHA',last:'MOOSE',number:12,rarity:'rare',team:'TUNDRA',tag:'ANTLER GIANT',pose:'skyhook'},
   {first:'ECHO',last:'WOLF',number:11,rarity:'rare',team:'FOREST',tag:'PACK CALLER',pose:'jumpman'},
   {first:'STRIPE',last:'BADGER',number:14,rarity:'rare',team:'FOREST',tag:'FIERCE DIGGER',pose:'fadeaway'},
-  {first:'CORAL',last:'OCTOPUS',pose:'skyhook',number:8,rarity:'rare',team:'OCEAN',tag:'EIGHT-ARM MIND'},
+  {first:'CORAL',last:'OCTOPUS',number:8,rarity:'rare',team:'OCEAN',tag:'EIGHT-ARM MIND'},
   {first:'RUSTY',last:'FOX',number:9,rarity:'rare',team:'FOREST',tag:'CLEVER TRICKSTER',pose:'fadeaway'},
   // OLDSCHOOL - endangered species
   {first:'BAMBOO',last:'PANDA',number:1,rarity:'oldschool',team:'RAINFOREST',tag:'BLACK AND WHITE',pose:'jumpman'},
@@ -296,13 +289,13 @@ const STARTING_USERS = {
 };
 
 // Bronze-only starter for future new accounts (account creation still disabled).
-// Real low-key NBA players so they're authentic, just not superstars.
+// Real low-key NBA players so thee authentic, just not superstars.
 const NEW_USER_STARTER = [
-  {id:'ns_c1',first:'ROCKY',last:'RACCOON',number:7,pps:6,rarity:'common',material:'bronze',team:'FOREST',tag:'NIGHT BANDIT',pose:'jumpman'},
-  {id:'ns_c2',first:'DAISY',last:'SQUIRREL',number:2,pps:7,rarity:'common',material:'bronze',team:'FOREST',tag:'NUT GATHERER',pose:'jumpman'},
-  {id:'ns_c3',first:'HAZEL',last:'HEDGEHOG',number:4,pps:8,rarity:'common',material:'bronze',team:'FOREST',tag:'PRICKLY BALL',pose:'fadeaway'},
-  {id:'ns_c4',first:'BUDDY',last:'BEAVER',number:8,pps:9,rarity:'common',material:'bronze',team:'WETLAND',tag:'DAM BUILDER',pose:'dunk'},
-  {id:'ns_c5',first:'PIP',last:'CHIPMUNK',number:1,pps:11,rarity:'common',material:'bronze',team:'FOREST',tag:'CHEEK STUFFER',pose:'skyhook'},
+  {id:'ns_c1',first:'ROCKY',last:'RACCOON',number:7,pps:6,rarity:'common',material:'bronze',team:'FOREST',tag:'NIGHT BANDIT'},
+  {id:'ns_c2',first:'DAISY',last:'SQUIRREL',number:2,pps:7,rarity:'common',material:'bronze',team:'FOREST',tag:'NUT GATHERER'},
+  {id:'ns_c3',first:'HAZEL',last:'HEDGEHOG',number:4,pps:8,rarity:'common',material:'bronze',team:'FOREST',tag:'PRICKLY BALL'},
+  {id:'ns_c4',first:'BUDDY',last:'BEAVER',number:8,pps:9,rarity:'common',material:'bronze',team:'WETLAND',tag:'DAM BUILDER'},
+  {id:'ns_c5',first:'PIP',last:'CHIPMUNK',number:1,pps:11,rarity:'common',material:'bronze',team:'FOREST',tag:'CHEEK STUFFER'},
 ];
 
 // Music tracks (synthesized live via Tone.js — no external audio files)
@@ -321,7 +314,7 @@ function PortraitFadeaway({color}){return(<svg viewBox="0 0 200 280" preserveAsp
 function PortraitSkyhook({color}){return(<svg viewBox="0 0 200 280" preserveAspectRatio="xMidYMid meet" style={{width:'100%',height:'100%'}}><ellipse cx="100" cy="155" rx="22" ry="55" fill={color}/><circle cx="100" cy="88" r="26" fill={color}/><path d="M22 140 Q10 120 8 100 Q18 95 30 108 Q50 100 78 138 Z" fill={color}/><path d="M178 140 Q190 120 192 100 Q182 95 170 108 Q150 100 122 138 Z" fill={color}/><path d="M30 108 Q18 130 15 158 Q28 148 42 148 Q60 140 78 138 Z" fill={color} opacity="0.85"/><path d="M170 108 Q182 130 185 158 Q172 148 158 148 Q140 140 122 138 Z" fill={color} opacity="0.85"/><ellipse cx="100" cy="215" rx="12" ry="30" fill={color}/><path d="M88 240 Q78 258 72 268 Q84 260 92 262 Z" fill={color}/><path d="M112 240 Q122 258 128 268 Q116 260 108 262 Z" fill={color}/></svg>);}
 const POSE_PORTRAITS = { dunk:PortraitDunk, jumpman:PortraitJumpman, fadeaway:PortraitFadeaway, skyhook:PortraitSkyhook };
 
-/* LOGO BADGE — Carter's circular emblem with orbiting tagline */
+/* LOGO BADGE — Carte circular emblem with orbiting tagline */
 function LogoBadge({size=180, accent='#1D9E75', primary='#fff7ed', dark='#085041'}){
   return (
     <svg viewBox="0 0 200 220" style={{width:size, height:Math.round(size*1.1), display:'block', flexShrink:0}}>
@@ -446,7 +439,7 @@ function getCardState(me, cardId){
 
 // Identity key for merging duplicate cards. Pulled NBA cards with identical
 // player + rarity + material + team merge into one stack with a qty count.
-// Custom mints are kept unique (they're unique art pieces, not collectibles).
+// Custom mints are kept unique (thee unique art pieces, not collectibles).
 const cardKey = c => c.id?.startsWith('mint_')
   ? `mint:${c.id}`
   : `${(c.first||'').trim()}|${(c.last||'').trim()}|${c.number}|${c.team}|${c.rarity}|${c.material||'bronze'}`;
@@ -548,15 +541,13 @@ function MaterialBadge({material,small,large}){
 /* PLAYER CARD */
 function PlayerCard({card,hovered,onHover,onLeave,onClick,damage=0}){
   const r = RARITIES[card.rarity];
-  const _pose = card.pose || (PACK_POOL.find(function(p){return p.first===card.first&&p.last===card.last;})||{}).pose;
-  const card2 = _pose && !card.pose ? Object.assign({},card,{pose:_pose}) : card;
   const m = MATERIALS[card.material||'bronze'];
   const hue = getCardHue(card);
   const isMythic = card.rarity==='mythic';
   const isLegend = card.rarity==='legend';
   const isSn = (card.material||'bronze')==='supernova';
-  const hasPose = card2.pose && POSE_PORTRAITS[card2.pose];
-  const Pose = hasPose ? POSE_PORTRAITS[card2.pose] : null;
+  const hasPose = card.pose && POSE_PORTRAITS[card.pose];
+  const Pose = hasPose ? POSE_PORTRAITS[card.pose] : null;
   return <div onMouseEnter={onHover} onMouseLeave={onLeave} onClick={onClick} style={{position:'relative',aspectRatio:'5 / 7',borderRadius:14,cursor:'pointer',transform:hovered?'translateY(-6px) rotate(-0.5deg)':'translateY(0)',transition:'transform 350ms cubic-bezier(.2,.8,.2,1), box-shadow 350ms',boxShadow:hovered?`0 24px 60px -10px ${m.glow}, 0 0 0 2px ${m.color}, inset 0 0 60px rgba(0,0,0,0.4)`:`0 8px 24px -6px rgba(0,0,0,0.6), 0 0 0 1.5px ${m.color}cc, inset 0 0 40px rgba(0,0,0,0.5)`,background:`linear-gradient(155deg, hsl(${hue} 70% 22%) 0%, hsl(${hue} 60% 8%) 100%)`,overflow:'hidden'}}>
     {isSn && <div style={{position:'absolute',inset:0,pointerEvents:'none',background:'linear-gradient(115deg, transparent 20%, rgba(236,72,153,0.25) 35%, rgba(168,85,247,0.3) 50%, rgba(59,130,246,0.25) 65%, transparent 80%)',mixBlendMode:'overlay',animation:'sheen 2.5s ease-in-out infinite'}}/>}
     {isMythic && !isSn && <div style={{position:'absolute',inset:0,pointerEvents:'none',background:'linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.18) 45%, rgba(255,200,80,0.25) 50%, rgba(255,255,255,0.18) 55%, transparent 70%)',mixBlendMode:'overlay',animation:'sheen 3.5s ease-in-out infinite'}}/>}
@@ -1036,7 +1027,7 @@ function FriendTradeModal({me,friend,onClose,onSend,onToast}){
         <div style={{width:54,height:54,borderRadius:14,background:`${friend.color}33`,fontSize:30,display:'flex',alignItems:'center',justifyContent:'center',border:`2px solid ${friend.color}`}}>{friend.emoji}</div>
         <div style={{flex:1}}>
           <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:24,color:'#fff7ed',letterSpacing:'0.04em'}}>TRADE WITH {friend.displayName.toUpperCase()}</div>
-          <div style={{fontSize:11.5,color:'#a8a29e',marginTop:2}}>{friend.ownedCards.length} cards · {friend.points.toLocaleString()} pts · they'll see this on next login</div>
+          <div style={{fontSize:11.5,color:'#a8a29e',marginTop:2}}>{friend.ownedCards.length} cards · {friend.points.toLocaleString()} pts · thel see this on next login</div>
         </div>
         <button onClick={onClose} style={{background:'transparent',border:'none',color:'#a8a29e',cursor:'pointer',padding:4}}><X size={20}/></button>
       </div>
@@ -1881,7 +1872,10 @@ function GoatPickerScreen({me, onPickGoat}){
   return <div style={{minHeight:'100vh',width:'100%',background:`radial-gradient(ellipse at 30% 20%, rgba(10,80,40,0.35) 0%, transparent 50%),radial-gradient(ellipse at 70% 20%, rgba(15,110,86,0.25) 0%, transparent 50%),radial-gradient(ellipse at 50% 100%, rgba(74,222,128,0.1) 0%, transparent 60%),linear-gradient(180deg, #060f08, #030a05)`,padding:'28px 20px 32px',fontFamily:'"Outfit",sans-serif',display:'flex',flexDirection:'column',alignItems:'center'}}>
     {/* Header — the badge is the brand */}
     <div style={{textAlign:'center',marginBottom:14,display:'flex',flexDirection:'column',alignItems:'center'}}>
-      <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:14,color:'#a8a29e',letterSpacing:'0.32em',marginBottom:10}}>WELCOME {me.displayName.toUpperCase()} · PLAY!! stamp */}
+      <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:14,color:'#a8a29e',letterSpacing:'0.32em',marginBottom:10}}>WELCOME {me.displayName.toUpperCase()} · PICK YOUR SPIRIT ANIMAL</div>
+      <LogoBadge size={200} accent="#fb923c" primary="#fff7ed"/>
+    </div>
+    {/* PLAY!! stamp */}
     <div style={{display:'inline-flex',alignItems:'center',gap:10,padding:'10px 28px',borderRadius:14,background:'linear-gradient(135deg, #22c55e, #15803d)',color:'#f0fdf4',fontFamily:'"Bebas Neue",sans-serif',fontSize:32,letterSpacing:'0.12em',boxShadow:'0 8px 28px rgba(74,222,128,0.4), inset 0 -3px 0 rgba(0,0,0,0.3)',marginBottom:10,transform:'rotate(-2deg)'}}>
       P · L · A · Y <span style={{fontSize:38,marginLeft:4}}>!!</span>
     </div>
@@ -3587,7 +3581,7 @@ export default function EcoHome({ session }){
 
   // Load on mount. NOTE: we deliberately do NOT subscribe to realtime
   // changes that would overwrite in-memory user state — that race
-  // condition wiped Tyler's roster in the first version of Pass 2.
+  // condition wiped Tyle roster in the first version of Pass 2.
   // Trade refresh is handled manually when the user opens the inbox.
   useEffect(()=>{
     let cancelled = false;
@@ -4184,7 +4178,7 @@ export default function EcoHome({ session }){
     return <>
       <style>{globalStyles}</style>
       <div style={{position:'fixed',inset:0,display:'flex',alignItems:'center',justifyContent:'center',background:'#0a0908',color:'#f5f3eb',fontFamily:'Inter,system-ui,sans-serif',fontSize:14,opacity:0.7}}>
-        Loading your family's data…
+        Loading your famil data…
       </div>
       {toast && <Toast message={toast.msg} kind={toast.kind} onDone={()=>setToast(null)}/>}
     </>;
