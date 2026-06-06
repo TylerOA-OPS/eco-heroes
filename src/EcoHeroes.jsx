@@ -674,6 +674,23 @@ function CardDetailModal({card,onClose,onSell,isMine=true,onEdit,binders,onAddTo
           {(binders||[]).map(b=><button key={b.id} onClick={()=>{ onAddToBinder(b.id); }} style={{width:'100%',padding:'8px',borderRadius:6,background:'rgba(255,255,255,0.05)',border:'1px solid rgba(255,255,255,0.1)',color:'#fff7ed',cursor:'pointer',fontFamily:'"Bebas Neue",sans-serif',fontSize:12,letterSpacing:'0.06em',textAlign:'left'}}>{b.title}</button>)}
           <button onClick={()=>setPickBinder(false)} style={{width:'100%',padding:'6px',borderRadius:6,background:'none',border:'none',color:'#78716c',cursor:'pointer',fontFamily:'"JetBrains Mono",monospace',fontSize:10,letterSpacing:'0.12em'}}>CANCEL</button>
         </div>}
+        {isMine && shelters && shelters.length>0 && (
+          <div style={{width:'100%',display:'flex',flexDirection:'column',gap:4,padding:'8px 10px',borderRadius:10,background:'rgba(134,239,172,0.06)',border:'1px solid rgba(134,239,172,0.2)'}}>
+            <div style={{fontSize:9,color:'#86efac',letterSpacing:'0.15em',fontFamily:'"JetBrains Mono",monospace',textAlign:'center',marginBottom:2}}>🌿 ADD TO SHELTER</div>
+            {shelters.map((sh,i)=>{
+              const sz=GREENHOUSE_SIZES[sh.size];
+              const already=(sh.animals||[]).includes(card.id);
+              const full=(sh.animals||[]).length>=(sz?sz.slots:4);
+              return(
+                <button key={i} onClick={()=>!already&&!full&&onAddToShelter&&onAddToShelter(i,card.id,true)}
+                  style={{width:'100%',padding:'7px 10px',borderRadius:8,background:already?'rgba(134,239,172,0.15)':'rgba(255,255,255,0.04)',border:'1px solid '+(already?'rgba(134,239,172,0.4)':'rgba(255,255,255,0.1)'),color:already?'#86efac':full?'#52525b':'#a8a29e',cursor:already||full?'default':'pointer',fontFamily:'"Bebas Neue",sans-serif',fontSize:11,letterSpacing:'0.08em',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                  <span>{sz?sz.label:sh.size} SHELTER</span>
+                  <span style={{fontSize:9,fontFamily:'"JetBrains Mono",monospace'}}>{already?'✓ ASSIGNED':full?'FULL':'+ ADD'}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
         {isMine && onEdit && <button onClick={()=>onEdit(card)} style={{width:'100%',padding:'10px',borderRadius:8,background:'rgba(168,85,247,0.1)',border:'1px solid rgba(168,85,247,0.3)',color:'#c4b5fd',cursor:'pointer',fontFamily:'"Bebas Neue",sans-serif',fontSize:13,letterSpacing:'0.1em',display:'flex',alignItems:'center',justifyContent:'center',gap:6}}><Brush size={13}/>EDIT THIS CARD{(card.qty||1)>1?` · ALL ${card.qty}`:''}</button>}
         {isMine && onSell && <button onClick={()=>onSell(card)} style={{width:'100%',padding:'10px',borderRadius:8,background:'rgba(248,113,113,0.1)',border:'1px solid rgba(248,113,113,0.3)',color:'#fca5a5',cursor:'pointer',fontFamily:'"Bebas Neue",sans-serif',fontSize:13,letterSpacing:'0.1em'}}>{(card.qty||1)>1 ? `SELL 1 OF ${card.qty} · +${Math.floor(value*0.6).toLocaleString()} PTS` : `SELL FOR ${Math.floor(value*0.6).toLocaleString()} PTS`}</button>}
       </div>
