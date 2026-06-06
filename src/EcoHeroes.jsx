@@ -1411,7 +1411,7 @@ function ShelterScreen({me,onBuildShelter,onToast,onAssignAnimal}){
                     ):null;
                   })}
                   {assigned.length<slots&&onAssignAnimal&&(
-                    <select onChange={function(e){if(e.target.value){onAssignAnimal(gi,e.target.value,true);e.target.value='';}}} style={{padding:'3px 8px',borderRadius:8,background:'rgba(255,255,255,0.06)',border:'1px solid rgba(134,239,172,0.3)',color:'#86efac',fontSize:11,...mono,cursor:'pointer'}}>
+                    <select onChange={function(e){if(e.target.value){onAssignAnimal(gi,e.target.value,true);e.target.value='';}}} style={{padding:'3px 8px',borderRadius:8,background:'rgba(255,255,255,0.08)',border:'1px solid rgba(134,239,172,0.4)',color:'#fff7ed',fontSize:11,...mono,cursor:'pointer'}}>
                       <option value=''>+ Add animal</option>
                       {cards.filter(function(c){return!ghs.some(function(g){return(g.animals||[]).includes(c.id);});}).map(function(c){
                         return(<option key={c.id} value={c.id}>{c.first} {c.last} ({c.rarity})</option>);
