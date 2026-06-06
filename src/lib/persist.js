@@ -13,7 +13,7 @@ export async function persistProfile(user) {
       last_daily_date: user.lastDailyDate || null,
       unlocked_tracks: user.unlockedTracks || ['vibes','practice'],
       // ── Eco systems ──
-      greenhouses:     user.greenhouses    || [],
+      greenhouses:     user.shelters       || [],   // Supabase col = greenhouses, app = shelters
       materials:       user.materials      || {},
       expeditions:     user.expeditions    || {},
       card_hunger:     user.cardHunger     || {},

@@ -17,13 +17,13 @@ function buildUser(profile, cardRows) {
     binderData: profile.binder_data || { binders: [], cardStates: {} },
     ownedCards: cardRows.map(rowToCard),
     // ── Eco systems ──
-    greenhouses:    profile.greenhouses    || [],
-    materials:      profile.materials      || {},
-    expeditions:    profile.expeditions    || {},
-    cardHunger:     profile.card_hunger    || {},
-    cardInjury:     profile.card_injury    || {},
-    foodInventory:  profile.food_inventory || {},
-    vetInventory:   profile.vet_inventory  || {},
+    shelters:      profile.greenhouses    || [],   // Supabase col = greenhouses, app = shelters
+    materials:     profile.materials      || {},
+    expeditions:   profile.expeditions    || {},
+    cardHunger:    profile.card_hunger    || {},
+    cardInjury:    profile.card_injury    || {},
+    foodInventory: profile.food_inventory || {},
+    vetInventory:  profile.vet_inventory  || {},
   };
 }
 
