@@ -106,8 +106,8 @@ function getFoodPct(foodId, card) {
   return Math.min(100, Math.round(food.basePct * mult));
 }
 
-// Greenhouse build materials
-const GREENHOUSE_SIZES = {
+// Shelter build materials
+const SHELTER_SIZES = {
   xs:{label:'EXTRA SMALL',wood:6,  stone:4, glass:3, brick:3, slots:4, eco:2, desc:'Fits 4 animals'},
   s: {label:'SMALL',      wood:12, stone:8, glass:6, brick:6, slots:8, eco:5, desc:'Fits 8 animals'},
   m: {label:'MEDIUM',     wood:22, stone:14,glass:10,brick:10,slots:16,eco:12,desc:'Fits 16 animals'},
@@ -1277,7 +1277,7 @@ function TravelScreen({me,onSendExpedition,onCollectExpedition,onToast}){
   return(
     <div style={{padding:'16px 12px 120px',maxWidth:520,margin:'0 auto'}}>
       <h2 style={{...t,fontSize:28,color:'#c4b5fd',letterSpacing:'0.08em',margin:'0 0 4px'}}>EXPEDITIONS</h2>
-      <p style={{fontSize:11,color:'#78716c',margin:'0 0 8px',...mono}}>Send animals to gather greenhouse materials</p>
+      <p style={{fontSize:11,color:'#78716c',margin:'0 0 8px',...mono}}>Send animals to gather shelter materials</p>
       <div style={{display:'flex',gap:8,marginBottom:16,flexWrap:'wrap'}}>
         {TRAVEL_MATERIALS.map(m=>(
           <div key={m} style={{display:'flex',alignItems:'center',gap:4,padding:'3px 8px',borderRadius:99,background:'rgba(255,255,255,0.06)',fontSize:11,color:'#a8a29e',...mono}}>
@@ -1321,19 +1321,19 @@ function TravelScreen({me,onSendExpedition,onCollectExpedition,onToast}){
   );
 }
 
-function GreenhouseScreen({me,onBuildGreenhouse,onToast,onAssignAnimal}){
+function ShelterScreen({me,onBuildShelter,onToast,onAssignAnimal}){
   const [selSize,setSelSize]=useState(null);
   const mats=me.materials||{};
-  const ghs=me.greenhouses||[];
+  const ghs=me.shelters||[];
   const me2={wood:'🪵',stone:'🪨',glass:'🔷',brick:'🧱'};
   const mc={wood:'#fb923c',stone:'#94a3b8',glass:'#67e8f9',brick:'#f87171'};
-  const canAfford=sz=>['wood','stone','glass','brick'].every(k=>(mats[k]||0)>=GREENHOUSE_SIZES[sz][k]);
-  const doBuild=()=>{if(!selSize)return;if(!canAfford(selSize)){onToast('Not enough materials!','err');return;}onBuildGreenhouse(selSize);setSelSize(null);};
+  const canAfford=sz=>['wood','stone','glass','brick'].every(k=>(mats[k]||0)>=SHELTER_SIZES[sz][k]);
+  const doBuild=()=>{if(!selSize)return;if(!canAfford(selSize)){onToast('Not enough materials!','err');return;}onBuildShelter(selSize);setSelSize(null);};
   const t={fontFamily:'"Bebas Neue",sans-serif'};
   const mono={fontFamily:'"JetBrains Mono",monospace'};
   return(
     <div style={{padding:'16px 12px 120px',maxWidth:520,margin:'0 auto'}}>
-      <h2 style={{...t,fontSize:28,color:'#86efac',letterSpacing:'0.08em',margin:'0 0 4px'}}>GREENHOUSE</h2>
+      <h2 style={{...t,fontSize:28,color:'#86efac',letterSpacing:'0.08em',margin:'0 0 4px'}}>SHELTER</h2>
       <p style={{fontSize:11,color:'#78716c',margin:'0 0 12px',...mono}}>Build with expedition materials</p>
       <div style={{display:'flex',gap:8,marginBottom:20,flexWrap:'wrap'}}>
         {TRAVEL_MATERIALS.map(m=>(
@@ -1344,9 +1344,9 @@ function GreenhouseScreen({me,onBuildGreenhouse,onToast,onAssignAnimal}){
           </div>
         ))}
       </div>
-      <div style={{fontSize:10,color:'#78716c',letterSpacing:'0.15em',...mono,marginBottom:8}}>BUILD NEW GREENHOUSE</div>
+      <div style={{fontSize:10,color:'#78716c',letterSpacing:'0.15em',...mono,marginBottom:8}}>BUILD NEW SHELTER</div>
       <div style={{display:'flex',flexDirection:'column',gap:8,marginBottom:16}}>
-        {Object.entries(GREENHOUSE_SIZES).map(([key,sz])=>{
+        {Object.entries(SHELTER_SIZES).map(([key,sz])=>{
           const can=canAfford(key);const sel=selSize===key;
           return(
             <button key={key} onClick={()=>can&&setSelSize(sel?null:key)}
@@ -1365,18 +1365,18 @@ function GreenhouseScreen({me,onBuildGreenhouse,onToast,onAssignAnimal}){
       </div>
       {selSize&&canAfford(selSize)&&(
         <button onClick={doBuild} style={{width:'100%',padding:'14px',borderRadius:14,border:'none',background:'linear-gradient(135deg,#86efac,#22c55e)',color:'#052e16',...t,fontSize:20,letterSpacing:'0.1em',cursor:'pointer',marginBottom:20}}>
-          BUILD {GREENHOUSE_SIZES[selSize].label} GREENHOUSE
+          BUILD {SHELTER_SIZES[selSize].label} SHELTER
         </button>
       )}
       {ghs.length>0&&(
         <>
-          <div style={{fontSize:10,color:'#78716c',letterSpacing:'0.15em',...mono,marginBottom:8}}>YOUR GREENHOUSES ({ghs.length})</div>
+          <div style={{fontSize:10,color:'#78716c',letterSpacing:'0.15em',...mono,marginBottom:8}}>YOUR SHELTERS ({ghs.length})</div>
           <div style={{display:'flex',flexDirection:'column',gap:6}}>
-            {ghs.map((gh,i)=>{const sz=GREENHOUSE_SIZES[gh.size];return(
+            {ghs.map((gh,i)=>{const sz=SHELTER_SIZES[gh.size];return(
               <div key={i} style={{display:'flex',alignItems:'center',gap:10,padding:'10px 12px',borderRadius:12,border:'1px solid rgba(134,239,172,0.2)',background:'rgba(134,239,172,0.04)'}}>
                 <span style={{fontSize:24}}>🌿</span>
                 <div style={{flex:1}}>
-                  <div style={{fontSize:12,color:'#fff7ed',...t,letterSpacing:'0.06em'}}>{sz&&sz.label||gh.size} GREENHOUSE</div>
+                  <div style={{fontSize:12,color:'#fff7ed',...t,letterSpacing:'0.06em'}}>{sz&&sz.label||gh.size} SHELTER</div>
                   <div style={{fontSize:9,color:'#78716c',...mono}}>Built {new Date(gh.builtAt).toLocaleDateString()}</div>
                 </div>
                 <div style={{fontSize:11,color:'#86efac',...mono}}>+{sz&&sz.eco||0}/s</div>
@@ -1385,19 +1385,19 @@ function GreenhouseScreen({me,onBuildGreenhouse,onToast,onAssignAnimal}){
           </div>
         </>
       )}
-      {ghs.length===0&&<div style={{padding:'30px',textAlign:'center',color:'#52525b',fontSize:12,fontStyle:'italic'}}>No greenhouses yet. Go on expeditions to gather materials!</div>}
+      {ghs.length===0&&<div style={{padding:'30px',textAlign:'center',color:'#52525b',fontSize:12,fontStyle:'italic'}}>No shelters yet. Go on expeditions to gather materials!</div>}
       {ghs.length>0&&(
         <div style={{marginTop:16}}>
-          <div style={{fontSize:10,color:'#78716c',letterSpacing:'0.15em',...mono,marginBottom:8}}>ASSIGN ANIMALS TO GREENHOUSES</div>
+          <div style={{fontSize:10,color:'#78716c',letterSpacing:'0.15em',...mono,marginBottom:8}}>ASSIGN ANIMALS TO SHELTERS</div>
           {ghs.map(function(gh,gi){
-            var sz=GREENHOUSE_SIZES[gh.size];
+            var sz=SHELTER_SIZES[gh.size];
             var assigned=(gh.animals||[]);
             var slots=sz?sz.slots:4;
             var cards=me.ownedCards||[];
             return(
               <div key={gi} style={{marginBottom:14,padding:'12px',borderRadius:12,border:'1px solid rgba(134,239,172,0.2)',background:'rgba(134,239,172,0.03)'}}>
                 <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
-                  <div style={{fontSize:12,color:'#fff7ed',...t,letterSpacing:'0.06em'}}>{sz&&sz.label} GREENHOUSE</div>
+                  <div style={{fontSize:12,color:'#fff7ed',...t,letterSpacing:'0.06em'}}>{sz&&sz.label} SHELTER</div>
                   <div style={{fontSize:10,color:'#86efac',...mono}}>{assigned.length}/{slots} ANIMALS</div>
                 </div>
                 <div style={{display:'flex',gap:6,flexWrap:'wrap',alignItems:'center'}}>
@@ -1639,7 +1639,7 @@ function MobileNavSheet({onClose,screen,setScreen,setLeaderboardOpen,refreshTrad
     {label:'LEADERS',sub:'FAMILY RANKS',Icon:Trophy,color:'#fbbf24',onPick:()=>go(()=>setLeaderboardOpen(true))},
     {label:'TRAVEL',sub:'EXPEDITIONS',Icon:Rocket,color:'#c4b5fd',onPick:()=>go(()=>setScreen('travel')),active:screen==='travel'},
     {label:'FOOD',sub:'FEED · VET',Icon:Sparkles,color:'#4ade80',onPick:()=>go(()=>setScreen('food')),active:screen==='food'},
-    {label:'GREENHOUSE',sub:'BUILD',Icon:Sparkles,color:'#86efac',onPick:()=>go(()=>setScreen('greenhouse')),active:screen==='greenhouse'},
+    {label:'SHELTER',sub:'BUILD',Icon:Sparkles,color:'#86efac',onPick:()=>go(()=>setScreen('shelter')),active:screen==='shelter'},
     {label:'DESIGN',sub:'MINT NEW',Icon:Palette,hero:true,onPick:()=>go(()=>setScreen('design')),active:screen==='design'},
     {label:'INBOX',sub:`${inboxCount} OFFERS`,Icon:Inbox,color:inboxCount>0?'#a855f7':null,onPick:()=>go(()=>{refreshTrades(); setInboxOpen(true);})},
   ];
@@ -3486,26 +3486,26 @@ export default function EcoHome({ session }){
   };
   const handleAssignAnimal=function(ghIndex,cardId,assign){
     if(!me)return;
-    var newGhs=(me.greenhouses||[]).map(function(gh,i){
+    var newGhs=(me.shelters||[]).map(function(gh,i){
       if(i!==ghIndex)return gh;
       var animals=gh.animals?gh.animals.slice():[];
       if(assign){if(!animals.includes(cardId))animals.push(cardId);}
       else{animals=animals.filter(function(id){return id!==cardId;});}
       return Object.assign({},gh,{animals:animals});
     });
-    updateUser(me.username,function(u){return Object.assign({},u,{greenhouses:newGhs});});
-    showToast(assign?'Animal added to greenhouse!':'Animal removed.','ok');
+    updateUser(me.username,function(u){return Object.assign({},u,{shelters:newGhs});});
+    showToast(assign?'Animal added to shelter!':'Animal removed.','ok');
   };
-  const handleBuildGreenhouse=(size)=>{
+  const handleBuildShelter=(size)=>{
     if(!me)return;
-    const sz=GREENHOUSE_SIZES[size];if(!sz)return;
+    const sz=SHELTER_SIZES[size];if(!sz)return;
     const nm={...(me.materials||{})};
     let ok=true;['wood','stone','glass','brick'].forEach(m=>{if((nm[m]||0)<sz[m])ok=false;});
     if(!ok){showToast('Not enough materials!','err');return;}
     ['wood','stone','glass','brick'].forEach(m=>{nm[m]=(nm[m]||0)-sz[m];});
-    const ng=[...(me.greenhouses||[]),{size,builtAt:Date.now()}];
-    updateUser(me.username,u=>({...u,materials:nm,greenhouses:ng}));
-    showToast(sz.label+' greenhouse built! +'+sz.eco+' ECO/sec','ok');
+    const ng=[...(me.shelters||[]),{size,builtAt:Date.now()}];
+    updateUser(me.username,u=>({...u,materials:nm,shelters:ng}));
+    showToast(sz.label+' shelter built! +'+sz.eco+' ECO/sec','ok');
   };
 
   const handlePickFavCard = (cardId) => {
@@ -4193,7 +4193,7 @@ export default function EcoHome({ session }){
       {screen==='design' && <DesignScreen points={me.points} onMint={handleMintCard} onToast={showToast} editingCard={editingCardForDesign} onCancelEdit={()=>setEditingCardForDesign(null)} onUpdateCard={handleUpdateCard} me={me} onSaveBinderCover={handleSaveBinderCover}/>}
       {screen==='food' && <FoodScreen me={me} onFeed={handleFeedAnimal} onHeal={handleHealAnimal} onToast={showToast}/>}
       {screen==='travel' && <TravelScreen me={me} onSendExpedition={handleSendExpedition} onCollectExpedition={handleCollectExpedition} onToast={showToast}/>}
-      {screen==='greenhouse' && <GreenhouseScreen me={me} onBuildGreenhouse={handleBuildGreenhouse} onToast={showToast} onAssignAnimal={handleAssignAnimal}/>}
+      {screen==='shelter' && <ShelterScreen me={me} onBuildShelter={handleBuildShelter} onToast={showToast} onAssignAnimal={handleAssignAnimal}/>}
 
       {/* Bottom dock with USER button */}
       <div data-dock="true" style={{position:'fixed',bottom:16,left:'50%',transform:'translateX(-50%)',display:'flex',flexWrap:'wrap',justifyContent:'center',gap:6,padding:8,background:'rgba(8,20,12,0.92)',backdropFilter:'blur(14px)',borderRadius:18,border:'none',boxShadow:'0 12px 40px -8px rgba(0,0,0,0.7), 0 0 0 2px #2d5a2e, 0 0 0 4px #1a3d1b, 0 0 0 6px rgba(74,222,128,0.15), 0 0 20px rgba(74,222,128,0.1)',zIndex:50,maxWidth:'calc(100vw - 32px)',overflowX:'auto'}}>
@@ -4203,7 +4203,7 @@ export default function EcoHome({ session }){
 
         <NavButton label="FOOD" sub="FEED · VET" Icon={Sparkles} isActive={screen==='food'} onClick={()=>setScreen('food')} color="#4ade80"/>
         <NavButton label="TRAVEL" sub="EXPEDITIONS" Icon={Rocket} isActive={screen==='travel'} onClick={()=>setScreen('travel')} color="#c4b5fd"/>
-        <NavButton label="GREENHOUSE" sub="BUILD" Icon={Sparkles} isActive={screen==='greenhouse'} onClick={()=>setScreen('greenhouse')} color="#86efac"/>
+        <NavButton label="SHELTER" sub="BUILD" Icon={Sparkles} isActive={screen==='shelter'} onClick={()=>setScreen('shelter')} color="#86efac"/>
         <NavButton label="LEADERS" sub="FAMILY RANKS" Icon={Trophy} isActive={false} onClick={()=>setLeaderboardOpen(true)} color="#fbbf24"/>
         <NavButton label="DESIGN" sub="MINT NEW" Icon={Palette} isHero isActive={screen==='design'} onClick={()=>setScreen('design')}/>
         <NavButton label="INBOX" sub={`${inboxCount} OFFERS`} Icon={Inbox} isActive={false} onClick={()=>{ refreshTrades(); setInboxOpen(true); }} color={inboxCount>0?'#a855f7':undefined}/>
