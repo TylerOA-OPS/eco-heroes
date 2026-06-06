@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+ï»¿import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import * as Tone from 'tone';
 import { supabase, signOut as supabaseSignOut } from './lib/supabase.js';
 import { loadAllData, subscribeToTrades } from './lib/dataStore.js';
@@ -50,10 +50,10 @@ const HABITATS = [
 const TEAM_LOOKUP = HABITATS.reduce((m,t)=>({...m,[t.abbr]:t}),{});
 const POSITIONS = ['PG','SG','SF','PF','C'];
 const PACK_TYPES = {
-  daily:    { id:'daily',    label:'DAILY PACK',     subtitle:'3 cards · low rare odds',          price:0,      free:true, accent:'#fb923c', rarityWeights:{common:55,uncommon:25,rare:12,oldschool:5,legend:2.5,mythic:0.5}, materialWeights:{bronze:60,silver:25,gold:10,platinum:3.5,diamond:1.3,supernova:0.2} },
-  premium:  { id:'premium',  label:'PREMIUM PACK',   subtitle:'3 cards · boosted rare odds',      price:25000,  accent:'#fbbf24', rarityWeights:{common:30,uncommon:30,rare:22,oldschool:10,legend:6,mythic:2}, materialWeights:{bronze:35,silver:35,gold:18,platinum:8,diamond:3,supernova:1} },
-  diamond:  { id:'diamond',  label:'DIAMOND PACK',   subtitle:'3 cards · platinum+ guaranteed × 1', price:120000, accent:'#67e8f9', guaranteedMaterial:'platinum', rarityWeights:{common:15,uncommon:20,rare:28,oldschool:18,legend:14,mythic:5}, materialWeights:{bronze:15,silver:25,gold:30,platinum:18,diamond:9,supernova:3} },
-  supernova:{ id:'supernova',label:'SUPERNOVA PACK', subtitle:'diamond guaranteed · 30% supernova chance', price:500000, accent:'#ec4899', guaranteedMaterial:'diamond', supernovaHitChance:0.30, rarityWeights:{common:5,uncommon:10,rare:20,oldschool:20,legend:30,mythic:15}, materialWeights:{bronze:5,silver:15,gold:25,platinum:25,diamond:20,supernova:10} },
+  daily:    { id:'daily',    label:'DAILY PACK',     subtitle:'3 cards ï¿½ low rare odds',          price:0,      free:true, accent:'#fb923c', rarityWeights:{common:55,uncommon:25,rare:12,oldschool:5,legend:2.5,mythic:0.5}, materialWeights:{bronze:60,silver:25,gold:10,platinum:3.5,diamond:1.3,supernova:0.2} },
+  premium:  { id:'premium',  label:'PREMIUM PACK',   subtitle:'3 cards ï¿½ boosted rare odds',      price:25000,  accent:'#fbbf24', rarityWeights:{common:30,uncommon:30,rare:22,oldschool:10,legend:6,mythic:2}, materialWeights:{bronze:35,silver:35,gold:18,platinum:8,diamond:3,supernova:1} },
+  diamond:  { id:'diamond',  label:'DIAMOND PACK',   subtitle:'3 cards ï¿½ platinum+ guaranteed ï¿½ 1', price:120000, accent:'#67e8f9', guaranteedMaterial:'platinum', rarityWeights:{common:15,uncommon:20,rare:28,oldschool:18,legend:14,mythic:5}, materialWeights:{bronze:15,silver:25,gold:30,platinum:18,diamond:9,supernova:3} },
+  supernova:{ id:'supernova',label:'SUPERNOVA PACK', subtitle:'diamond guaranteed ï¿½ 30% supernova chance', price:500000, accent:'#ec4899', guaranteedMaterial:'diamond', supernovaHitChance:0.30, rarityWeights:{common:5,uncommon:10,rare:20,oldschool:20,legend:30,mythic:15}, materialWeights:{bronze:5,silver:15,gold:25,platinum:25,diamond:20,supernova:10} },
   fireball: { id:'fireball', label:'FIREBALL PACK', subtitle:'3 asteroid cards', price:8000, accent:'#f97316', rarityWeights:{rare:50,legend:35,mythic:15}, materialWeights:{bronze:5,silver:15,gold:25,platinum:10,diamond:5,supernova:2,spark:25,flame:10,fireball:3} },
   rocky:    { id:'rocky',    label:'ROCKY PACK',    subtitle:'3 asteroid cards', price:15000, accent:'#a16207', rarityWeights:{rare:40,legend:40,mythic:20}, materialWeights:{silver:10,gold:20,platinum:15,diamond:8,supernova:3,spark:20,flame:18,fireball:6} },
   smash:    { id:'smash',    label:'SMASH PACK',    subtitle:'5 asteroid cards', price:30000, accent:'#dc2626', rarityWeights:{rare:30,legend:45,mythic:25}, materialWeights:{gold:10,platinum:18,diamond:15,supernova:7,spark:15,flame:20,fireball:15} },
@@ -124,7 +124,7 @@ const VET_PACK_ITEMS = [
 ];
 
 // Pack sizes: 3-card is base price, 5-card is 1.25x, 10-card is 1.75x
-// (per-card cost gets cheaper at larger sizes — bulk discount).
+// (per-card cost gets cheaper at larger sizes ï¿½ bulk discount).
 const PACK_SIZES = {
   3:  { count:3,  multiplier:1.00, label:'3 CARDS',  short:'3'  },
   5:  { count:5,  multiplier:1.25, label:'5 CARDS',  short:'5'  },
@@ -132,74 +132,74 @@ const PACK_SIZES = {
 };
 
 const HIGHLIGHTS = {
-  'LEBRON JAMES':['4× NBA Champion (2012, 2013, 2016, 2020)','4× League MVP · 4× Finals MVP','21× NBA All-Star (most ever)','All-Time Scoring Leader (40,000+ pts)','Drafted #1 overall · 2003'],
-  'MICHAEL JORDAN':['6× NBA Champion (1991-93, 1996-98)','6× Finals MVP · 5× League MVP','14× NBA All-Star','10× Scoring Champion','Defensive Player of the Year · 1988'],
-  'KOBE BRYANT':['5× NBA Champion (2000-02, 2009-10)','2× Finals MVP · 1× League MVP','18× NBA All-Star','81-point game vs Toronto · Jan 22, 2006','Numbers 8 and 24 retired by Lakers'],
-  'KAREEM ABDUL-JABBAR':['6× NBA Champion · 2× Finals MVP','6× League MVP (most all-time)','19× NBA All-Star','Held NBA scoring record for 39 years','Inventor & master of the skyhook'],
-  'VINCE CARTER':['8× NBA All-Star','2000 Slam Dunk Contest Champion','22 NBA seasons (most ever)','"Le Dunk de la Mort" · Sydney 2000','Rookie of the Year · 1999'],
-  'MAGIC JOHNSON':['5× NBA Champion (1980, 82, 85, 87, 88)','3× Finals MVP · 3× League MVP','12× NBA All-Star','Started at center as rookie · won Finals MVP','All-time assists leader at retirement'],
-  'MUGGSY BOGUES':['Shortest player in NBA history · 5\'3"','14 NBA seasons (1987-2001)','Hornets all-time assists leader','Career: 6,858 assists · 1,369 steals','1987 NBA Draft · #12 overall'],
-  'MANUTE BOL':['Tallest player in NBA history (tied) · 7\'7"','Only player with more career blocks than points','2,086 career blocks','15 blocks in a single half · 1986','Humanitarian · Sudanese refugee advocate'],
-  'LARRY BIRD':['3× NBA Champion (1981, 1984, 1986)','3× League MVP (1984, 1985, 1986)','12× NBA All-Star','Rookie of the Year · 1980','2× Finals MVP'],
-  'BILL RUSSELL':['11× NBA Champion (most rings ever)','5× League MVP','12× NBA All-Star','NBA Finals MVP trophy named after him','Defensive icon · changed how the game is played'],
-  'HAKEEM OLAJUWON':['2× NBA Champion (1994, 1995)','1994 League MVP · 2× Finals MVP','12× NBA All-Star','NBA all-time blocks leader · 3,830','Master of "The Dream Shake"'],
-  'KARL MALONE':['2× League MVP (1997, 1999)','14× NBA All-Star','2nd all-time scorer at retirement','"The Mailman" · always delivered','11× All-NBA First Team'],
-  'DIRK NOWITZKI':['NBA Champion · 2011 Finals MVP','League MVP · 2007','14× NBA All-Star','21 seasons with one franchise (Mavericks)','Pioneer of the 7-foot stretch shooter'],
-  'TIM DUNCAN':['5× NBA Champion (1999, 2003, 05, 07, 14)','2× League MVP · 3× Finals MVP','15× NBA All-Star','Rookie of the Year · 1998','Spurs jersey #21 retired'],
-  'JASON KIDD':['NBA Champion · 2011 (Mavericks)','10× NBA All-Star','2× Olympic Gold Medalist','107 career triple-doubles','Co-Rookie of the Year · 1995'],
-  'PAU GASOL':['2× NBA Champion (2009, 2010)','6× NBA All-Star','Rookie of the Year · 2002','Spanish basketball icon · 4× Olympic medalist','Retired Lakers jersey #16'],
-  'STEVE NASH':['2× League MVP (2005, 2006)','8× NBA All-Star','5× Assists leader','50-40-90 club · 4 times','Suns offensive revolution architect'],
-  'ROBERT HORRY':['7× NBA Champion ("Big Shot Bob")','Game-winning 3s in 4 different finals','2002 buzzer-beater vs Kings','Played for 3 different championship teams','16 NBA seasons of clutch shotmaking'],
-  'BRUCE BOWEN':['3× NBA Champion (2003, 2005, 2007)','8× NBA All-Defensive Team','Spurs jersey #12 retired','Premier 3-and-D wing of his era','82 games × 8 straight seasons'],
-  'BRIAN SCALABRINE':['NBA Champion · 2008 (Boston Celtics)','"The White Mamba" cult phenomenon','11 NBA seasons','Beloved bench presence · championship glue','Became fan-favorite broadcaster'],
-  'JULIUS ERVING':['3× ABA Champion · 1× NBA Champion (1983)','3× League MVP (combined ABA/NBA)','11× NBA All-Star · 5× ABA All-Star','Pioneered above-the-rim play','1976 ABA Slam Dunk Contest icon'],
-  'SHAWN KEMP':['6× NBA All-Star','6× All-NBA selection','"The Reign Man" · Sonics legend','1994 Slam Dunk Contest finalist','Drafted at 19 directly from high school'],
-  'PENNY HARDAWAY':['4× NBA All-Star','2× All-NBA First Team','#1 pick · Lil Penny ad icon','Magic franchise legend before injuries','Now head coach at Memphis'],
-  'DOMINIQUE WILKINS':['9× NBA All-Star','"The Human Highlight Film"','2× NBA Slam Dunk Contest Champion','1985-86 NBA Scoring Champion','Hawks jersey #21 retired'],
-  'KURT RAMBIS':['4× NBA Champion with Lakers (1982, 85, 87, 88)','Iconic black-rim glasses & blue-collar grit','14 NBA seasons · Showtime Lakers role player','Later Lakers head coach & assistant','Drafted #58 overall · Knicks 1980'],
-  'JEROME WILLIAMS':['"The Junkyard Dog" · pure hustle nickname','9 NBA seasons · Pistons, Raptors, Bulls, Knicks','Beloved Toronto fan favorite','Defensive energy player · all 100% effort','Drafted #26 overall · Pistons 1996'],
-  'ANDERSON VAREJAO':['NBA Champion · 2015 Warriors','12 seasons with Cleveland Cavaliers','"Wild Thing" · Brazilian fan favorite','Career: 7,800+ rebounds','Brazilian basketball icon · Olympics 2008'],
-  'ERIC SNOW':['NBA Finals appearance · 2001 Sixers','13 NBA seasons · defensive PG','Career: 4,925 assists · 1,068 steals','Drafted #43 overall · Bucks 1995','Cleveland Cavaliers veteran leader'],
-  'JOHN STARKS':['NBA All-Star · 1994','NBA Sixth Man of the Year · 1997','NBA Finals appearance · 1994 Knicks','Famous left-handed dunk · 1993 ECF Game 2','Undrafted out of Oklahoma State'],
-  'HORACE GRANT':['4× NBA Champion (3 with Bulls, 1 with Lakers)','NBA All-Star · 1994','Signature sports goggles look','17 NBA seasons','Drafted #10 overall · Bulls 1987'],
-  'ANTHONY MASON':['NBA Sixth Man of the Year · 1995','NBA All-Star · 2001','Knicks fan favorite · "Mase"','Famous undrafted hustle career','Inventive haircuts & passing big man'],
-  'BEN WALLACE':['NBA Champion · 2004 Pistons','4× Defensive Player of the Year (most ever)','4× NBA All-Star','Undrafted to Hall of Fame','Pistons jersey #3 retired'],
-  'MANU GINOBILI':['4× NBA Champion (2003, 05, 07, 14)','2× NBA All-Star','NBA Sixth Man of the Year · 2008','Olympic Gold Medal · Argentina 2004','Pioneered the Euro Step in the NBA'],
-  'ALLEN IVERSON':['NBA MVP · 2001','11× NBA All-Star · 2× All-Star MVP','4× NBA scoring champion','Rookie of the Year · 1997','Sixers jersey #3 retired · "The Answer"'],
-  'TRACY MCGRADY':['7× NBA All-Star','2× NBA scoring champion (2003, 2004)','13 points in 35 seconds vs Spurs · 2004','NBA Most Improved Player · 2001','Drafted #9 overall · Raptors 1997'],
-  'CHARLES BARKLEY':['NBA MVP · 1993','11× NBA All-Star','1996 Olympic Dream Team gold','11× All-NBA selection','"Sir Charles" · 1996 Top 50 player'],
-  'JOHN STOCKTON':['NBA all-time assists leader (15,806)','NBA all-time steals leader (3,265)','10× NBA All-Star','19 seasons with Utah Jazz','2× Olympic Gold Medalist'],
-  'WILT CHAMBERLAIN':['100-point game · March 2, 1962','4× NBA MVP · 13× All-Star','2× NBA Champion (1967, 1972)','50.4 points per game season · 1961-62','Averaged 22.9 rebounds per game career'],
+  'LEBRON JAMES':['4ï¿½ NBA Champion (2012, 2013, 2016, 2020)','4ï¿½ League MVP ï¿½ 4ï¿½ Finals MVP','21ï¿½ NBA All-Star (most ever)','All-Time Scoring Leader (40,000+ pts)','Drafted #1 overall ï¿½ 2003'],
+  'MICHAEL JORDAN':['6ï¿½ NBA Champion (1991-93, 1996-98)','6ï¿½ Finals MVP ï¿½ 5ï¿½ League MVP','14ï¿½ NBA All-Star','10ï¿½ Scoring Champion','Defensive Player of the Year ï¿½ 1988'],
+  'KOBE BRYANT':['5ï¿½ NBA Champion (2000-02, 2009-10)','2ï¿½ Finals MVP ï¿½ 1ï¿½ League MVP','18ï¿½ NBA All-Star','81-point game vs Toronto ï¿½ Jan 22, 2006','Numbers 8 and 24 retired by Lakers'],
+  'KAREEM ABDUL-JABBAR':['6ï¿½ NBA Champion ï¿½ 2ï¿½ Finals MVP','6ï¿½ League MVP (most all-time)','19ï¿½ NBA All-Star','Held NBA scoring record for 39 years','Inventor & master of the skyhook'],
+  'VINCE CARTER':['8ï¿½ NBA All-Star','2000 Slam Dunk Contest Champion','22 NBA seasons (most ever)','"Le Dunk de la Mort" ï¿½ Sydney 2000','Rookie of the Year ï¿½ 1999'],
+  'MAGIC JOHNSON':['5ï¿½ NBA Champion (1980, 82, 85, 87, 88)','3ï¿½ Finals MVP ï¿½ 3ï¿½ League MVP','12ï¿½ NBA All-Star','Started at center as rookie ï¿½ won Finals MVP','All-time assists leader at retirement'],
+  'MUGGSY BOGUES':['Shortest player in NBA history ï¿½ 5\'3"','14 NBA seasons (1987-2001)','Hornets all-time assists leader','Career: 6,858 assists ï¿½ 1,369 steals','1987 NBA Draft ï¿½ #12 overall'],
+  'MANUTE BOL':['Tallest player in NBA history (tied) ï¿½ 7\'7"','Only player with more career blocks than points','2,086 career blocks','15 blocks in a single half ï¿½ 1986','Humanitarian ï¿½ Sudanese refugee advocate'],
+  'LARRY BIRD':['3ï¿½ NBA Champion (1981, 1984, 1986)','3ï¿½ League MVP (1984, 1985, 1986)','12ï¿½ NBA All-Star','Rookie of the Year ï¿½ 1980','2ï¿½ Finals MVP'],
+  'BILL RUSSELL':['11ï¿½ NBA Champion (most rings ever)','5ï¿½ League MVP','12ï¿½ NBA All-Star','NBA Finals MVP trophy named after him','Defensive icon ï¿½ changed how the game is played'],
+  'HAKEEM OLAJUWON':['2ï¿½ NBA Champion (1994, 1995)','1994 League MVP ï¿½ 2ï¿½ Finals MVP','12ï¿½ NBA All-Star','NBA all-time blocks leader ï¿½ 3,830','Master of "The Dream Shake"'],
+  'KARL MALONE':['2ï¿½ League MVP (1997, 1999)','14ï¿½ NBA All-Star','2nd all-time scorer at retirement','"The Mailman" ï¿½ always delivered','11ï¿½ All-NBA First Team'],
+  'DIRK NOWITZKI':['NBA Champion ï¿½ 2011 Finals MVP','League MVP ï¿½ 2007','14ï¿½ NBA All-Star','21 seasons with one franchise (Mavericks)','Pioneer of the 7-foot stretch shooter'],
+  'TIM DUNCAN':['5ï¿½ NBA Champion (1999, 2003, 05, 07, 14)','2ï¿½ League MVP ï¿½ 3ï¿½ Finals MVP','15ï¿½ NBA All-Star','Rookie of the Year ï¿½ 1998','Spurs jersey #21 retired'],
+  'JASON KIDD':['NBA Champion ï¿½ 2011 (Mavericks)','10ï¿½ NBA All-Star','2ï¿½ Olympic Gold Medalist','107 career triple-doubles','Co-Rookie of the Year ï¿½ 1995'],
+  'PAU GASOL':['2ï¿½ NBA Champion (2009, 2010)','6ï¿½ NBA All-Star','Rookie of the Year ï¿½ 2002','Spanish basketball icon ï¿½ 4ï¿½ Olympic medalist','Retired Lakers jersey #16'],
+  'STEVE NASH':['2ï¿½ League MVP (2005, 2006)','8ï¿½ NBA All-Star','5ï¿½ Assists leader','50-40-90 club ï¿½ 4 times','Suns offensive revolution architect'],
+  'ROBERT HORRY':['7ï¿½ NBA Champion ("Big Shot Bob")','Game-winning 3s in 4 different finals','2002 buzzer-beater vs Kings','Played for 3 different championship teams','16 NBA seasons of clutch shotmaking'],
+  'BRUCE BOWEN':['3ï¿½ NBA Champion (2003, 2005, 2007)','8ï¿½ NBA All-Defensive Team','Spurs jersey #12 retired','Premier 3-and-D wing of his era','82 games ï¿½ 8 straight seasons'],
+  'BRIAN SCALABRINE':['NBA Champion ï¿½ 2008 (Boston Celtics)','"The White Mamba" cult phenomenon','11 NBA seasons','Beloved bench presence ï¿½ championship glue','Became fan-favorite broadcaster'],
+  'JULIUS ERVING':['3ï¿½ ABA Champion ï¿½ 1ï¿½ NBA Champion (1983)','3ï¿½ League MVP (combined ABA/NBA)','11ï¿½ NBA All-Star ï¿½ 5ï¿½ ABA All-Star','Pioneered above-the-rim play','1976 ABA Slam Dunk Contest icon'],
+  'SHAWN KEMP':['6ï¿½ NBA All-Star','6ï¿½ All-NBA selection','"The Reign Man" ï¿½ Sonics legend','1994 Slam Dunk Contest finalist','Drafted at 19 directly from high school'],
+  'PENNY HARDAWAY':['4ï¿½ NBA All-Star','2ï¿½ All-NBA First Team','#1 pick ï¿½ Lil Penny ad icon','Magic franchise legend before injuries','Now head coach at Memphis'],
+  'DOMINIQUE WILKINS':['9ï¿½ NBA All-Star','"The Human Highlight Film"','2ï¿½ NBA Slam Dunk Contest Champion','1985-86 NBA Scoring Champion','Hawks jersey #21 retired'],
+  'KURT RAMBIS':['4ï¿½ NBA Champion with Lakers (1982, 85, 87, 88)','Iconic black-rim glasses & blue-collar grit','14 NBA seasons ï¿½ Showtime Lakers role player','Later Lakers head coach & assistant','Drafted #58 overall ï¿½ Knicks 1980'],
+  'JEROME WILLIAMS':['"The Junkyard Dog" ï¿½ pure hustle nickname','9 NBA seasons ï¿½ Pistons, Raptors, Bulls, Knicks','Beloved Toronto fan favorite','Defensive energy player ï¿½ all 100% effort','Drafted #26 overall ï¿½ Pistons 1996'],
+  'ANDERSON VAREJAO':['NBA Champion ï¿½ 2015 Warriors','12 seasons with Cleveland Cavaliers','"Wild Thing" ï¿½ Brazilian fan favorite','Career: 7,800+ rebounds','Brazilian basketball icon ï¿½ Olympics 2008'],
+  'ERIC SNOW':['NBA Finals appearance ï¿½ 2001 Sixers','13 NBA seasons ï¿½ defensive PG','Career: 4,925 assists ï¿½ 1,068 steals','Drafted #43 overall ï¿½ Bucks 1995','Cleveland Cavaliers veteran leader'],
+  'JOHN STARKS':['NBA All-Star ï¿½ 1994','NBA Sixth Man of the Year ï¿½ 1997','NBA Finals appearance ï¿½ 1994 Knicks','Famous left-handed dunk ï¿½ 1993 ECF Game 2','Undrafted out of Oklahoma State'],
+  'HORACE GRANT':['4ï¿½ NBA Champion (3 with Bulls, 1 with Lakers)','NBA All-Star ï¿½ 1994','Signature sports goggles look','17 NBA seasons','Drafted #10 overall ï¿½ Bulls 1987'],
+  'ANTHONY MASON':['NBA Sixth Man of the Year ï¿½ 1995','NBA All-Star ï¿½ 2001','Knicks fan favorite ï¿½ "Mase"','Famous undrafted hustle career','Inventive haircuts & passing big man'],
+  'BEN WALLACE':['NBA Champion ï¿½ 2004 Pistons','4ï¿½ Defensive Player of the Year (most ever)','4ï¿½ NBA All-Star','Undrafted to Hall of Fame','Pistons jersey #3 retired'],
+  'MANU GINOBILI':['4ï¿½ NBA Champion (2003, 05, 07, 14)','2ï¿½ NBA All-Star','NBA Sixth Man of the Year ï¿½ 2008','Olympic Gold Medal ï¿½ Argentina 2004','Pioneered the Euro Step in the NBA'],
+  'ALLEN IVERSON':['NBA MVP ï¿½ 2001','11ï¿½ NBA All-Star ï¿½ 2ï¿½ All-Star MVP','4ï¿½ NBA scoring champion','Rookie of the Year ï¿½ 1997','Sixers jersey #3 retired ï¿½ "The Answer"'],
+  'TRACY MCGRADY':['7ï¿½ NBA All-Star','2ï¿½ NBA scoring champion (2003, 2004)','13 points in 35 seconds vs Spurs ï¿½ 2004','NBA Most Improved Player ï¿½ 2001','Drafted #9 overall ï¿½ Raptors 1997'],
+  'CHARLES BARKLEY':['NBA MVP ï¿½ 1993','11ï¿½ NBA All-Star','1996 Olympic Dream Team gold','11ï¿½ All-NBA selection','"Sir Charles" ï¿½ 1996 Top 50 player'],
+  'JOHN STOCKTON':['NBA all-time assists leader (15,806)','NBA all-time steals leader (3,265)','10ï¿½ NBA All-Star','19 seasons with Utah Jazz','2ï¿½ Olympic Gold Medalist'],
+  'WILT CHAMBERLAIN':['100-point game ï¿½ March 2, 1962','4ï¿½ NBA MVP ï¿½ 13ï¿½ All-Star','2ï¿½ NBA Champion (1967, 1972)','50.4 points per game season ï¿½ 1961-62','Averaged 22.9 rebounds per game career'],
 };
 const ANIMAL_FACTS = {
-  'BAMBOO PANDA':['Eats up to 38kg of bamboo per day','Has a false thumb — an enlarged wrist bone','Can swim and climb trees expertly','Cubs are born the size of a stick of butter','Black-and-white pattern helps with temperature control'],
-  'DAISY SQUIRREL':['Buries thousands of nuts per season — and forgets most','Can find food buried under a foot of snow','Teeth never stop growing throughout life','Can fall from 30m and land safely','Communicates danger with unique tail flicks'],
-  'HAZEL HEDGEHOG':['Has up to 7,000 spines on its body','Rolls into a perfect ball when threatened','Eats beetles, slugs and caterpillars','Hibernates through winter months','Surprisingly fast — can run 2km per hour'],
+  'BAMBOO PANDA':['Eats up to 38kg of bamboo per day','Has a false thumb ï¿½ an enlarged wrist bone','Can swim and climb trees expertly','Cubs are born the size of a stick of butter','Black-and-white pattern helps with temperature control'],
+  'DAISY SQUIRREL':['Buries thousands of nuts per season ï¿½ and forgets most','Can find food buried under a foot of snow','Teeth never stop growing throughout life','Can fall from 30m and land safely','Communicates danger with unique tail flicks'],
+  'HAZEL HEDGEHOG':['Has up to 7,000 spines on its body','Rolls into a perfect ball when threatened','Eats beetles, slugs and caterpillars','Hibernates through winter months','Surprisingly fast ï¿½ can run 2km per hour'],
   'RUSTY FOX':['Remembers the location of thousands of food caches','Can hear a mouse under 3 feet of snow','Runs up to 50 km/h in short bursts','Uses Earths magnetic field to hunt','Has vertical pupils like a cat'],
-  'WHISKER OTTER':['Holds hands while sleeping so they dont drift apart','Uses rocks as tools to crack open shellfish','Has the densest fur of any mammal — 1M hairs per sq inch','Can hold its breath for 8 minutes','Plays games for fun — a sign of high intelligence'],
+  'WHISKER OTTER':['Holds hands while sleeping so they dont drift apart','Uses rocks as tools to crack open shellfish','Has the densest fur of any mammal ï¿½ 1M hairs per sq inch','Can hold its breath for 8 minutes','Plays games for fun ï¿½ a sign of high intelligence'],
   'BUDDY BEAVER':['Builds dams that can flood entire forests','Teeth are orange due to iron-reinforced enamel','Can hold its breath for 15 minutes','Second largest rodent on Earth','Creates its own wetland ecosystem'],
-  'PICO PORCUPINE':['Has over 30,000 quills — each barbed like a fishhook','Quills grow back after being lost','Cannot shoot quills — they detach on contact','Quills contain antibiotics to prevent self infection','Excellent climbers despite their size'],
-  'SWIFT MEERKAT':['Immune to venom — eats scorpions for breakfast','Takes turns acting as sentinel on watch duty','Teaches pups how to handle dangerous prey','Can detect predators from over 300m away','Lives in groups of up to 30 individuals'],
+  'PICO PORCUPINE':['Has over 30,000 quills ï¿½ each barbed like a fishhook','Quills grow back after being lost','Cannot shoot quills ï¿½ they detach on contact','Quills contain antibiotics to prevent self infection','Excellent climbers despite their size'],
+  'SWIFT MEERKAT':['Immune to venom ï¿½ eats scorpions for breakfast','Takes turns acting as sentinel on watch duty','Teaches pups how to handle dangerous prey','Can detect predators from over 300m away','Lives in groups of up to 30 individuals'],
   'LUNA WOLF':['Can howl loud enough to be heard 10km away','Mates for life in most cases','Packs have complex social hierarchies','Runs up to 60 km/h when hunting','Responsible for reshaping entire river ecosystems'],
-  'TITAN TORTOISE':['Can live over 150 years','Goes months without food or water','Grows its entire life — never stops','Shell is part of its spine — cannot leave it','One of the few truly ancient creatures still alive'],
-  'FLASH CHEETAH':['Fastest land animal — 0 to 112 km/h in 3 seconds','Cannot roar — purrs like a domestic cat','Hunts by sight, not smell','Needs 30 minutes to rest after each chase','Has black tear-mark streaks to reduce sun glare'],
-  'RIPPLE DOLPHIN':['Sleeps with one eye open — rests half its brain at a time','Has its own unique whistle — a personal name','Can swim up to 60 km/h','Echolocates with clicks up to 1000 per second','Has been observed teaching fishing techniques to young'],
+  'TITAN TORTOISE':['Can live over 150 years','Goes months without food or water','Grows its entire life ï¿½ never stops','Shell is part of its spine ï¿½ cannot leave it','One of the few truly ancient creatures still alive'],
+  'FLASH CHEETAH':['Fastest land animal ï¿½ 0 to 112 km/h in 3 seconds','Cannot roar ï¿½ purrs like a domestic cat','Hunts by sight, not smell','Needs 30 minutes to rest after each chase','Has black tear-mark streaks to reduce sun glare'],
+  'RIPPLE DOLPHIN':['Sleeps with one eye open ï¿½ rests half its brain at a time','Has its own unique whistle ï¿½ a personal name','Can swim up to 60 km/h','Echolocates with clicks up to 1000 per second','Has been observed teaching fishing techniques to young'],
   'STORM ORCA':['Largest member of the dolphin family','Has distinct dialects between family groups','Females live up to 100 years','Hunts great white sharks for their livers','No recorded wild orca attack on a human'],
-  'BLAZE JAGUAR':['Swims for fun — loves water unlike most cats','Bite force strong enough to pierce turtle shells','Black coat is camouflage — spots still visible in light','Kills with a skull-crushing bite rather than neck bite','Sacred animal in many ancient civilizations'],
-  'AURORA SWAN':['Mates for life — mourns a lost partner','Can fly up to 95 km/h','Nest size can reach 1.8m wide','Young called cygnets — grey for first year','Has the most feathers of any bird species'],
-  'MUFASA LION':['Only social cat — lives in prides','Roar can be heard from 8km away','Sleeps up to 20 hours per day','Has retractable claws — kept sharp for hunting','Males grow distinctive manes by age 3'],
-  'TUSK ELEPHANT':['Largest land animal on Earth','Can recognize themselves in a mirror','Mourns its dead — returns to visit bones','Communicates through vibrations felt through feet','Memory is extraordinary — never forgets a face'],
-  'ZEUS EAGLE':['Eyesight is 4-8× stronger than a humans','Dives at over 160 km/h to catch prey','Mates for life and returns to same nest each year','Nest can weigh over 900kg after years of building','Symbol of power in over 25 national flags'],
+  'BLAZE JAGUAR':['Swims for fun ï¿½ loves water unlike most cats','Bite force strong enough to pierce turtle shells','Black coat is camouflage ï¿½ spots still visible in light','Kills with a skull-crushing bite rather than neck bite','Sacred animal in many ancient civilizations'],
+  'AURORA SWAN':['Mates for life ï¿½ mourns a lost partner','Can fly up to 95 km/h','Nest size can reach 1.8m wide','Young called cygnets ï¿½ grey for first year','Has the most feathers of any bird species'],
+  'MUFASA LION':['Only social cat ï¿½ lives in prides','Roar can be heard from 8km away','Sleeps up to 20 hours per day','Has retractable claws ï¿½ kept sharp for hunting','Males grow distinctive manes by age 3'],
+  'TUSK ELEPHANT':['Largest land animal on Earth','Can recognize themselves in a mirror','Mourns its dead ï¿½ returns to visit bones','Communicates through vibrations felt through feet','Memory is extraordinary ï¿½ never forgets a face'],
+  'ZEUS EAGLE':['Eyesight is 4-8ï¿½ stronger than a humans','Dives at over 160 km/h to catch prey','Mates for life and returns to same nest each year','Nest can weigh over 900kg after years of building','Symbol of power in over 25 national flags'],
   'ECHO WOLF':['Howls to communicate across vast distances','Plays to strengthen pack social bonds','Paws have webbing between toes for swimming','Navigates using an internal magnetic compass','Responsible for restoring balance to Yellowstone'],
-  'ATLAS BEAR':['Can smell food from 20km away','Runs up to 55 km/h — faster than a horse','Hibernates up to 7 months a year','Has the strongest bite force of any land predator','Extremely intelligent — uses tools in captivity'],
-  'STRIPE BADGER':['Can dig faster than a human can with a shovel','Fearless — will defend itself against lions','Has remarkably tough skin — very hard to bite through','Honey badger is its close relative','Plays dead convincingly to escape predators'],
-  'ROCKY RACCOON':['Washes food before eating — even in the wild','Has incredibly dexterous front paws','Can remember solutions to puzzles for 3 years','Has 40 different sounds for communication','Can open locks, jars, and latches'],
-  'GAIA GORILLA':['Shares 98.3% of DNA with humans','Makes new sleeping nests every single night','Can learn sign language — over 1,000 signs','Has its own unique fingerprints','Lives in family groups led by a silverback'],
-  'CORAL OCTOPUS':['Has three hearts and blue blood','Can squeeze through any opening bigger than its beak','Each arm has its own mini-brain and can act independently','Changes skin texture and color in milliseconds','Highly intelligent — solves puzzles and plays games'],
-  'RUBY CARDINAL':['Only female songbirds that sing in North America','Bright red color from pigments in food they eat','Can live up to 15 years in the wild','Raises two or three broods per year','Mate for life — male feeds female during courtship'],
-  'MOCHA MOOSE':['Largest member of the deer family','Can dive up to 6m underwater to eat plants','Newborn calves can outrun a human within days','Antlers grow up to 1.8m wide — shed every year','A single moose can eat 20kg of vegetation daily'],
-  'PIP CHIPMUNK':['Stores food in cheek pouches — can hold 35+ nuts at once','Hibernates for 5 months with food stored underground','Has a speed of up to 33 km/h despite tiny size','Can carry its body weight in food per trip','Makes at least 3 different alarm call types'],
-  'SUNDANCE RHINO':['Skin is 5cm thick — like armor plating','Horn is made of keratin — same as human fingernails','Can run up to 55 km/h despite massive size','Has poor eyesight but excellent hearing and smell','Rolls in mud to protect skin from sunburn and insects'],
+  'ATLAS BEAR':['Can smell food from 20km away','Runs up to 55 km/h ï¿½ faster than a horse','Hibernates up to 7 months a year','Has the strongest bite force of any land predator','Extremely intelligent ï¿½ uses tools in captivity'],
+  'STRIPE BADGER':['Can dig faster than a human can with a shovel','Fearless ï¿½ will defend itself against lions','Has remarkably tough skin ï¿½ very hard to bite through','Honey badger is its close relative','Plays dead convincingly to escape predators'],
+  'ROCKY RACCOON':['Washes food before eating ï¿½ even in the wild','Has incredibly dexterous front paws','Can remember solutions to puzzles for 3 years','Has 40 different sounds for communication','Can open locks, jars, and latches'],
+  'GAIA GORILLA':['Shares 98.3% of DNA with humans','Makes new sleeping nests every single night','Can learn sign language ï¿½ over 1,000 signs','Has its own unique fingerprints','Lives in family groups led by a silverback'],
+  'CORAL OCTOPUS':['Has three hearts and blue blood','Can squeeze through any opening bigger than its beak','Each arm has its own mini-brain and can act independently','Changes skin texture and color in milliseconds','Highly intelligent ï¿½ solves puzzles and plays games'],
+  'RUBY CARDINAL':['Only female songbirds that sing in North America','Bright red color from pigments in food they eat','Can live up to 15 years in the wild','Raises two or three broods per year','Mate for life ï¿½ male feeds female during courtship'],
+  'MOCHA MOOSE':['Largest member of the deer family','Can dive up to 6m underwater to eat plants','Newborn calves can outrun a human within days','Antlers grow up to 1.8m wide ï¿½ shed every year','A single moose can eat 20kg of vegetation daily'],
+  'PIP CHIPMUNK':['Stores food in cheek pouches ï¿½ can hold 35+ nuts at once','Hibernates for 5 months with food stored underground','Has a speed of up to 33 km/h despite tiny size','Can carry its body weight in food per trip','Makes at least 3 different alarm call types'],
+  'SUNDANCE RHINO':['Skin is 5cm thick ï¿½ like armor plating','Horn is made of keratin ï¿½ same as human fingernails','Can run up to 55 km/h despite massive size','Has poor eyesight but excellent hearing and smell','Rolls in mud to protect skin from sunburn and insects'],
 };
 const getHighlights = card => ANIMAL_FACTS[card.first+' '+card.last] || null;
 
@@ -262,7 +262,7 @@ const PACK_POOL = [
   {first:'COSMOS',last:'OWL',number:6,rarity:'mythic',team:'FOREST',tag:'NIGHT ORACLE',pose:'fadeaway'},
 ];
 const TRADERS = [
-  {id:'mossy',name:'Mossy Mara',vibe:'LOWBALLER',color:'#f87171',emoji:'??',bio:'Always overvalues her cards. Drives a hard bargain, watch the fine print.',mood:'Eyeing your roster…',
+  {id:'mossy',name:'Mossy Mara',vibe:'LOWBALLER',color:'#f87171',emoji:'??',bio:'Always overvalues her cards. Drives a hard bargain, watch the fine print.',mood:'Eyeing your rosterï¿½',
     inventory:[
       {id:'sv1',first:'SPIKE',last:'PORCUPINE',number:5,pps:38,rarity:'uncommon',material:'silver',team:'FOREST',tag:'QUILL MASTER',priceMod:1.4},
       {id:'sv2',first:'DART',last:'FROG',number:12,pps:32,rarity:'uncommon',material:'silver',team:'RAINFOREST',tag:'POISON DART',priceMod:1.3},
@@ -280,7 +280,7 @@ const TRADERS = [
     inventory:[
       {id:'hk1',first:'STORM',last:'ORCA',number:34,pps:94,rarity:'legend',material:'diamond',team:'OCEAN',tag:'OCEAN PREDATOR',pose:'fadeaway',priceMod:1.6},
       {id:'hk2',first:'BLAZE',last:'JAGUAR',number:32,pps:91,rarity:'legend',material:'gold',team:'RAINFOREST',tag:'JUNGLE GHOST',pose:'dunk',priceMod:1.55},
-      {id:'hk3',first:'AURORA',last:'SWAN',number:6,pps:115,rarity:'mythic',material:'supernova',team:'WETLAND',tag:'GRACE OF FLIGHT · 1-OF-1',pose:'jumpman',priceMod:1.8},
+      {id:'hk3',first:'AURORA',last:'SWAN',number:6,pps:115,rarity:'mythic',material:'supernova',team:'WETLAND',tag:'GRACE OF FLIGHT ï¿½ 1-OF-1',pose:'jumpman',priceMod:1.8},
     ]},
 ];
 const STARTING_USERS = {
@@ -298,7 +298,7 @@ const NEW_USER_STARTER = [
   {id:'ns_c5',first:'PIP',last:'CHIPMUNK',number:1,pps:11,rarity:'common',material:'bronze',team:'FOREST',tag:'CHEEK STUFFER'},
 ];
 
-// Music tracks (synthesized live via Tone.js — no external audio files)
+// Music tracks (synthesized live via Tone.js ï¿½ no external audio files)
 const MUSIC_TRACKS = [
   {id:'vibes',     name:'FOREST BREEZE',  subtitle:'gentle woodland',  price:0,      free:true,  tempo:'80 BPM',  vibe:'NATURE',   color:'#4ade80'},
   {id:'practice',  name:'RIVER FLOW',     subtitle:'babbling stream',  price:0,      free:true,  tempo:'72 BPM',  vibe:'WATER',    color:'#60a5fa'},
@@ -314,7 +314,7 @@ function PortraitFadeaway({color}){return(<svg viewBox="0 0 200 280" preserveAsp
 function PortraitSkyhook({color}){return(<svg viewBox="0 0 200 280" preserveAspectRatio="xMidYMid meet" style={{width:'100%',height:'100%'}}><ellipse cx="100" cy="155" rx="22" ry="55" fill={color}/><circle cx="100" cy="88" r="26" fill={color}/><path d="M22 140 Q10 120 8 100 Q18 95 30 108 Q50 100 78 138 Z" fill={color}/><path d="M178 140 Q190 120 192 100 Q182 95 170 108 Q150 100 122 138 Z" fill={color}/><path d="M30 108 Q18 130 15 158 Q28 148 42 148 Q60 140 78 138 Z" fill={color} opacity="0.85"/><path d="M170 108 Q182 130 185 158 Q172 148 158 148 Q140 140 122 138 Z" fill={color} opacity="0.85"/><ellipse cx="100" cy="215" rx="12" ry="30" fill={color}/><path d="M88 240 Q78 258 72 268 Q84 260 92 262 Z" fill={color}/><path d="M112 240 Q122 258 128 268 Q116 260 108 262 Z" fill={color}/></svg>);}
 const POSE_PORTRAITS = { dunk:PortraitDunk, jumpman:PortraitJumpman, fadeaway:PortraitFadeaway, skyhook:PortraitSkyhook };
 
-/* LOGO BADGE — Carter's circular emblem with orbiting tagline */
+/* LOGO BADGE ï¿½ Carter's circular emblem with orbiting tagline */
 function LogoBadge({size=180, accent='#1D9E75', primary='#fff7ed', dark='#085041'}){
   return (
     <svg viewBox="0 0 200 220" style={{width:size, height:Math.round(size*1.1), display:'block', flexShrink:0}}>
@@ -520,7 +520,7 @@ function QuickAction({icon:Icon,label,sub,accent,badge,onClick,disabled}){
 function Toast({message,kind='ok',onDone}){
   // Re-arm the timer only when a new message arrives, not on every parent
   // re-render. The points ticker re-renders App every 100ms, which used to
-  // recreate `onDone` and reset this timer forever — pill never closed.
+  // recreate `onDone` and reset this timer forever ï¿½ pill never closed.
   useEffect(()=>{const id=setTimeout(onDone,4000);return()=>clearTimeout(id);},[message]);
   const isErr=kind==='err';
   return <div style={{position:'fixed',top:24,left:'50%',transform:'translateX(-50%)',zIndex:300,padding:'12px 20px',background:isErr?'linear-gradient(135deg, #b91c1c, #7f1d1d)':'linear-gradient(135deg, #ff6b00, #c2410c)',color:'#fff7ed',borderRadius:999,fontFamily:'"Bebas Neue",sans-serif',fontSize:16,letterSpacing:'0.08em',display:'flex',alignItems:'center',gap:8,boxShadow:`0 12px 40px ${isErr?'rgba(185,28,28,0.5)':'rgba(255,107,0,0.5)'}`,animation:'float-up 300ms ease-out'}}>
@@ -578,7 +578,7 @@ function PlayerCard({card,hovered,onHover,onLeave,onClick,damage=0}){
       </div>
     </div>
     {(isLegend||isMythic) && <Sparkles size={14} style={{position:'absolute',bottom:110,right:12,color:r.color,filter:`drop-shadow(0 0 6px ${r.color})`}}/>}
-    {(card.qty||1) > 1 && <div style={{position:'absolute',top:'42%',right:8,minWidth:28,padding:'3px 7px',borderRadius:6,background:'linear-gradient(135deg, #fff7ed, #fbbf24)',color:'#0c0907',fontFamily:'"Bebas Neue",sans-serif',fontSize:14,fontWeight:800,letterSpacing:'0.04em',boxShadow:'0 2px 8px rgba(0,0,0,0.5), 0 0 12px rgba(251,191,36,0.5)',display:'flex',alignItems:'center',justifyContent:'center',lineHeight:1,border:'1.5px solid rgba(0,0,0,0.4)'}}>×{card.qty}</div>}
+    {(card.qty||1) > 1 && <div style={{position:'absolute',top:'42%',right:8,minWidth:28,padding:'3px 7px',borderRadius:6,background:'linear-gradient(135deg, #fff7ed, #fbbf24)',color:'#0c0907',fontFamily:'"Bebas Neue",sans-serif',fontSize:14,fontWeight:800,letterSpacing:'0.04em',boxShadow:'0 2px 8px rgba(0,0,0,0.5), 0 0 12px rgba(251,191,36,0.5)',display:'flex',alignItems:'center',justifyContent:'center',lineHeight:1,border:'1.5px solid rgba(0,0,0,0.4)'}}>ï¿½{card.qty}</div>}
   </div>;
 }
 
@@ -646,10 +646,10 @@ function CardDetailModal({card,onClose,onSell,isMine=true,onEdit,binders,onAddTo
               <BackStat label="WORTH" value={value>=1000?`${(value/1000).toFixed(1)}K`:value} color={m.color}/>
               <BackStat label="MATERIAL" value={m.label.slice(0,4)} color={m.color}/>
             </div>
-            {/* Highlights — like real card back */}
+            {/* Highlights ï¿½ like real card back */}
             <div style={{flex:1,padding:'8px 0',overflowY:'auto',minHeight:0}}>
               <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:11,color:r.color,letterSpacing:'0.18em',marginBottom:6,display:'flex',alignItems:'center',gap:5}}><Award size={11}/>ECO FACTS</div>
-              {highlights ? <ul style={{listStyle:'none',padding:0,margin:0}}>{highlights.map((h,i)=><li key={i} style={{display:'flex',alignItems:'flex-start',gap:6,padding:'3px 0',fontSize:10,color:'#d4d4d8',lineHeight:1.4}}><span style={{color:r.color,marginTop:1,flexShrink:0}}>?</span><span>{h}</span></li>)}</ul> : <div style={{fontSize:10,color:'#78716c',fontStyle:'italic',padding:'4px 0'}}>{card.id?.startsWith('mint_')?'Custom animal — their legend is still being written.':'No animal facts on file yet for this creature.'}</div>}
+              {highlights ? <ul style={{listStyle:'none',padding:0,margin:0}}>{highlights.map((h,i)=><li key={i} style={{display:'flex',alignItems:'flex-start',gap:6,padding:'3px 0',fontSize:10,color:'#d4d4d8',lineHeight:1.4}}><span style={{color:r.color,marginTop:1,flexShrink:0}}>?</span><span>{h}</span></li>)}</ul> : <div style={{fontSize:10,color:'#78716c',fontStyle:'italic',padding:'4px 0'}}>{card.id?.startsWith('mint_')?'Custom animal ï¿½ their legend is still being written.':'No animal facts on file yet for this creature.'}</div>}
             </div>
             {/* Footer strip */}
             <div style={{paddingTop:6,borderTop:`1px solid ${r.color}33`,display:'flex',justifyContent:'space-between',alignItems:'center',fontSize:8,color:'#78716c',fontFamily:'"JetBrains Mono",monospace',letterSpacing:'0.12em'}}>
@@ -668,9 +668,9 @@ function CardDetailModal({card,onClose,onSell,isMine=true,onEdit,binders,onAddTo
       {/* Action buttons */}
       <div style={{width:'100%',maxWidth:300,display:'flex',flexDirection:'column',gap:8}}>
         <div style={{padding:'10px 12px',borderRadius:10,background:'linear-gradient(135deg, rgba(255,107,0,0.1), transparent)',border:'1px solid rgba(255,107,0,0.25)',textAlign:'center'}}>
-          <div style={{fontSize:9,color:'#fdba74',letterSpacing:'0.15em',fontFamily:'"JetBrains Mono",monospace'}}>MARKET VALUE{(card.qty||1)>1?` · STACK OF ${card.qty}`:''}</div>
+          <div style={{fontSize:9,color:'#fdba74',letterSpacing:'0.15em',fontFamily:'"JetBrains Mono",monospace'}}>MARKET VALUE{(card.qty||1)>1?` ï¿½ STACK OF ${card.qty}`:''}</div>
           <div style={{fontFamily:'"JetBrains Mono",monospace',fontSize:18,fontWeight:800,color:'#fff7ed',marginTop:2}}>{value.toLocaleString()} <span style={{fontSize:11,color:'#fb923c'}}>PTS</span>{(card.qty||1)>1 && <span style={{fontSize:11,color:'#fbbf24',marginLeft:6}}>each</span>}</div>
-          <div style={{fontSize:9,color:'#78716c',marginTop:4,fontFamily:'"JetBrains Mono",monospace',letterSpacing:'0.08em'}}>{RARITIES[card.rarity].price.toLocaleString()} × {m.mult}× ({m.label}){(card.qty||1)>1?` · earns ${card.pps*card.qty}/sec total`:''}</div>
+          <div style={{fontSize:9,color:'#78716c',marginTop:4,fontFamily:'"JetBrains Mono",monospace',letterSpacing:'0.08em'}}>{RARITIES[card.rarity].price.toLocaleString()} ï¿½ {m.mult}ï¿½ ({m.label}){(card.qty||1)>1?` ï¿½ earns ${card.pps*card.qty}/sec total`:''}</div>
         </div>
         {isMine && damage>0 && <div style={{padding:'8px 12px',borderRadius:8,background:'rgba(248,113,113,0.12)',border:'1px solid rgba(248,113,113,0.35)',textAlign:'center'}}>
           <div style={{fontSize:9,color:'#fca5a5',letterSpacing:'0.15em',fontFamily:'"JetBrains Mono",monospace'}}>CONDITION: {DAMAGE_LABEL[damage]}</div>
@@ -678,15 +678,15 @@ function CardDetailModal({card,onClose,onSell,isMine=true,onEdit,binders,onAddTo
         </div>}
         {isMine && cardInjury && cardInjury[card.id] && (
           <div style={{width:'100%',display:'flex',flexDirection:'column',gap:6,padding:'10px 12px',borderRadius:10,background:'rgba(248,113,113,0.08)',border:'1px solid rgba(248,113,113,0.3)'}}>
-            <div style={{fontSize:9,color:'#fca5a5',letterSpacing:'0.15em',fontFamily:'"JetBrains Mono",monospace',textAlign:'center'}}>? {INJURY_STATES[cardInjury[card.id]]} — USE A VET PACK TO HEAL</div>
+            <div style={{fontSize:9,color:'#fca5a5',letterSpacing:'0.15em',fontFamily:'"JetBrains Mono",monospace',textAlign:'center'}}>? {INJURY_STATES[cardInjury[card.id]]} ï¿½ USE A VET PACK TO HEAL</div>
             {vetInventory && VET_PACK_ITEMS.filter(v=>(vetInventory[v.id]||0)>0).length>0
               ? VET_PACK_ITEMS.filter(v=>(vetInventory[v.id]||0)>0).map(v=>(
                 <button key={v.id} onClick={()=>onHealCard&&onHealCard(card.id,v.id)}
                   style={{width:'100%',padding:'8px 10px',borderRadius:8,background:'rgba(52,211,153,0.12)',border:'1px solid rgba(52,211,153,0.35)',color:'#34d399',cursor:'pointer',fontFamily:'"Bebas Neue",sans-serif',fontSize:13,letterSpacing:'0.1em',display:'flex',alignItems:'center',justifyContent:'center',gap:8}}>
-                  <span style={{fontSize:18}}>{v.emoji}</span> USE {v.label} <span style={{fontSize:10,color:'#78716c',fontFamily:'"JetBrains Mono",monospace'}}>×{vetInventory[v.id]}</span>
+                  <span style={{fontSize:18}}>{v.emoji}</span> USE {v.label} <span style={{fontSize:10,color:'#78716c',fontFamily:'"JetBrains Mono",monospace'}}>ï¿½{vetInventory[v.id]}</span>
                 </button>
               ))
-              : <div style={{fontSize:10,color:'#78716c',fontFamily:'"JetBrains Mono",monospace',textAlign:'center'}}>No vet packs in inventory — buy from SHOP</div>
+              : <div style={{fontSize:10,color:'#78716c',fontFamily:'"JetBrains Mono",monospace',textAlign:'center'}}>No vet packs in inventory ï¿½ buy from SHOP</div>
             }
           </div>
         )}
@@ -721,8 +721,8 @@ function CardDetailModal({card,onClose,onSell,isMine=true,onEdit,binders,onAddTo
             })}
           </div>
         )}
-        {isMine && onEdit && <button onClick={()=>onEdit(card)} style={{width:'100%',padding:'10px',borderRadius:8,background:'rgba(168,85,247,0.1)',border:'1px solid rgba(168,85,247,0.3)',color:'#c4b5fd',cursor:'pointer',fontFamily:'"Bebas Neue",sans-serif',fontSize:13,letterSpacing:'0.1em',display:'flex',alignItems:'center',justifyContent:'center',gap:6}}><Brush size={13}/>EDIT THIS CARD{(card.qty||1)>1?` · ALL ${card.qty}`:''}</button>}
-        {isMine && onSell && <button onClick={()=>onSell(card)} style={{width:'100%',padding:'10px',borderRadius:8,background:'rgba(248,113,113,0.1)',border:'1px solid rgba(248,113,113,0.3)',color:'#fca5a5',cursor:'pointer',fontFamily:'"Bebas Neue",sans-serif',fontSize:13,letterSpacing:'0.1em'}}>{(card.qty||1)>1 ? `SELL 1 OF ${card.qty} · +${Math.floor(value*0.6).toLocaleString()} PTS` : `SELL FOR ${Math.floor(value*0.6).toLocaleString()} PTS`}</button>}
+        {isMine && onEdit && <button onClick={()=>onEdit(card)} style={{width:'100%',padding:'10px',borderRadius:8,background:'rgba(168,85,247,0.1)',border:'1px solid rgba(168,85,247,0.3)',color:'#c4b5fd',cursor:'pointer',fontFamily:'"Bebas Neue",sans-serif',fontSize:13,letterSpacing:'0.1em',display:'flex',alignItems:'center',justifyContent:'center',gap:6}}><Brush size={13}/>EDIT THIS CARD{(card.qty||1)>1?` ï¿½ ALL ${card.qty}`:''}</button>}
+        {isMine && onSell && <button onClick={()=>onSell(card)} style={{width:'100%',padding:'10px',borderRadius:8,background:'rgba(248,113,113,0.1)',border:'1px solid rgba(248,113,113,0.3)',color:'#fca5a5',cursor:'pointer',fontFamily:'"Bebas Neue",sans-serif',fontSize:13,letterSpacing:'0.1em'}}>{(card.qty||1)>1 ? `SELL 1 OF ${card.qty} ï¿½ +${Math.floor(value*0.6).toLocaleString()} PTS` : `SELL FOR ${Math.floor(value*0.6).toLocaleString()} PTS`}</button>}
       </div>
     </div>
   </div>;
@@ -740,7 +740,7 @@ function generatePackCards(packType, count = 3){
   const out = [];
   // Pack-level Supernova guarantee: roll once per pack. If it hits,
   // pick a random slot that will be forced to supernova material.
-  // Acts as a FLOOR — natural per-card supernova rolls still apply
+  // Acts as a FLOOR ï¿½ natural per-card supernova rolls still apply
   // on top, so larger packs scale up naturally.
   const supernovaHitSlot = (cfg.supernovaHitChance && Math.random() < cfg.supernovaHitChance)
     ? Math.floor(Math.random() * count)
@@ -831,7 +831,7 @@ function PackOpener({pack,onClose,onAdd,onSupernova,onFullMoon}){
       <div onClick={ripPack} style={{cursor:'pointer',width:220,height:320,margin:'0 auto',borderRadius:16,background:packGrad,border:`3px solid ${cfg.accent}`,boxShadow:`0 0 60px ${cfg.accent}99, inset 0 0 60px rgba(0,0,0,0.5)`,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:16,padding:24,position:'relative',transition:'transform 200ms',animation:'pack-bob 2.2s ease-in-out infinite'}} onMouseEnter={e=>e.currentTarget.style.transform='scale(1.04)'} onMouseLeave={e=>e.currentTarget.style.transform='scale(1)'}>
         <div style={{position:'absolute',inset:0,borderRadius:13,background:'linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.25) 45%, rgba(255,255,255,0.25) 55%, transparent 70%)',animation:'sheen 3s ease-in-out infinite',pointerEvents:'none'}}/>
         <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:42,color:'#fff7ed',letterSpacing:'0.06em',textShadow:'0 4px 12px rgba(0,0,0,0.6)',lineHeight:0.9,textAlign:'center'}}>ECO<br/>HEROES</div>
-        <div style={{padding:'6px 14px',borderRadius:999,background:'rgba(0,0,0,0.5)',fontSize:11,fontFamily:'"JetBrains Mono",monospace',color:'#fff7ed',fontWeight:700,letterSpacing:'0.15em'}}>3 CARDS · {cfg.guaranteedMaterial?`${MATERIALS[cfg.guaranteedMaterial].label}+ × 1`:'1 GUARANTEED'}</div>
+        <div style={{padding:'6px 14px',borderRadius:999,background:'rgba(0,0,0,0.5)',fontSize:11,fontFamily:'"JetBrains Mono",monospace',color:'#fff7ed',fontWeight:700,letterSpacing:'0.15em'}}>3 CARDS ï¿½ {cfg.guaranteedMaterial?`${MATERIALS[cfg.guaranteedMaterial].label}+ ï¿½ 1`:'1 GUARANTEED'}</div>
         <div style={{fontSize:14,color:'#fff7ed',opacity:0.9,marginTop:8,fontWeight:600}}>?? TAP TO RIP</div>
       </div>
     </div>}
@@ -841,24 +841,24 @@ function PackOpener({pack,onClose,onAdd,onSupernova,onFullMoon}){
         <div style={{position:'absolute',bottom:0,left:0,right:0,height:'50%',borderRadius:'0 0 16px 16px',background:botGrad,border:`3px solid ${cfg.accent}`,borderTop:'none',animation:'rip-bottom 1.1s cubic-bezier(.4,.0,.6,1) forwards',clipPath:'polygon(0 5%, 8% 0, 22% 8%, 35% 0, 50% 12%, 65% 0, 78% 8%, 92% 0, 100% 5%, 100% 100%, 0 100%)'}}/>
         <div style={{position:'absolute',inset:'30% 25%',background:`radial-gradient(circle, ${cfg.accent}ee, transparent 70%)`,animation:'burst 1.1s ease-out forwards',borderRadius:'50%'}}/>
       </div>
-      <div style={{marginTop:24,fontFamily:'"Bebas Neue",sans-serif',fontSize:24,color:'#fff7ed',letterSpacing:'0.18em',animation:'pulse-text 0.6s ease-in-out infinite'}}>OPENING…</div>
+      <div style={{marginTop:24,fontFamily:'"Bebas Neue",sans-serif',fontSize:24,color:'#fff7ed',letterSpacing:'0.18em',animation:'pulse-text 0.6s ease-in-out infinite'}}>OPENINGï¿½</div>
     </div>}
     {stage==='reveal' && cur && <div style={{textAlign:'center',maxWidth:520,width:'100%',userSelect:'none'}}>
-      <div style={{fontFamily:'"JetBrains Mono",monospace',fontSize:13,color:m.color,letterSpacing:'0.2em',marginBottom:14,textTransform:'uppercase'}}>CARD {revealIdx+1} OF {cards.length} · {r.label} · {m.label}</div>
+      <div style={{fontFamily:'"JetBrains Mono",monospace',fontSize:13,color:m.color,letterSpacing:'0.2em',marginBottom:14,textTransform:'uppercase'}}>CARD {revealIdx+1} OF {cards.length} ï¿½ {r.label} ï¿½ {m.label}</div>
       <div onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp} style={{width:'100%',maxWidth:280,margin:'0 auto',position:'relative',touchAction:'pan-y',cursor:dragging?'grabbing':'grab'}}>
         <div key={revealIdx} style={{transform:`translateX(${dragX}px) rotate(${dragX*0.05}deg)`,transition:dragging?'none':'transform 250ms cubic-bezier(.2,.8,.2,1)',animation:dragging?'none':'reveal-card 700ms cubic-bezier(.2,.8,.2,1)',position:'relative'}}>
           <div style={{position:'absolute',inset:-40,borderRadius:'50%',background:`radial-gradient(circle, ${m.glow}, transparent 70%)`,filter:'blur(20px)',zIndex:-1,animation:'aura-pulse 2.5s ease-in-out infinite'}}/>
           <PlayerCard card={cur}/>
         </div>
       </div>
-      <div style={{marginTop:18,fontFamily:'"JetBrains Mono",monospace',fontSize:12,color:'#fb923c',letterSpacing:'0.15em'}}>+{cur.pps}/sec · WORTH {getCardValue(cur).toLocaleString()} PTS</div>
+      <div style={{marginTop:18,fontFamily:'"JetBrains Mono",monospace',fontSize:12,color:'#fb923c',letterSpacing:'0.15em'}}>+{cur.pps}/sec ï¿½ WORTH {getCardValue(cur).toLocaleString()} PTS</div>
       <div style={{marginTop:24,display:'flex',flexDirection:'column',alignItems:'center',gap:10}}>
         <div style={{display:'flex',gap:6}}>
           {cards.map((_,i)=><div key={i} style={{width:i===revealIdx?22:8,height:8,borderRadius:4,background:i===revealIdx?m.color:i<revealIdx?`${m.color}66`:'rgba(255,255,255,0.15)',transition:'all 250ms'}}/>)}
         </div>
         <div style={{fontFamily:'"JetBrains Mono",monospace',fontSize:11,color:'#a8a29e',letterSpacing:'0.18em',display:'flex',alignItems:'center',gap:10}}>
           {revealIdx>0 && <><ChevronLeft size={14}/> SWIPE</>}
-          <span style={{color:'#52525b'}}>·</span>
+          <span style={{color:'#52525b'}}>ï¿½</span>
           {revealIdx<cards.length-1 ? <>SWIPE <ChevronRight size={14}/></> : <button onClick={()=>{onAdd(cards);onClose();}} style={{padding:'8px 20px',borderRadius:999,background:'linear-gradient(135deg, #ff6b00, #c2410c)',color:'#fff7ed',border:'none',cursor:'pointer',fontFamily:'"Bebas Neue",sans-serif',fontSize:13,letterSpacing:'0.12em',display:'inline-flex',alignItems:'center',gap:6}}>ADD TO COLLECTION <ArrowRight size={14}/></button>}
         </div>
       </div>
@@ -1027,7 +1027,7 @@ function FriendTradeModal({me,friend,onClose,onSend,onToast}){
         <div style={{width:54,height:54,borderRadius:14,background:`${friend.color}33`,fontSize:30,display:'flex',alignItems:'center',justifyContent:'center',border:`2px solid ${friend.color}`}}>{friend.emoji}</div>
         <div style={{flex:1}}>
           <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:24,color:'#fff7ed',letterSpacing:'0.04em'}}>TRADE WITH {friend.displayName.toUpperCase()}</div>
-          <div style={{fontSize:11.5,color:'#a8a29e',marginTop:2}}>{friend.ownedCards.length} cards · {friend.points.toLocaleString()} pts · they'll see this on next login</div>
+          <div style={{fontSize:11.5,color:'#a8a29e',marginTop:2}}>{friend.ownedCards.length} cards ï¿½ {friend.points.toLocaleString()} pts ï¿½ they'll see this on next login</div>
         </div>
         <button onClick={onClose} style={{background:'transparent',border:'none',color:'#a8a29e',cursor:'pointer',padding:4}}><X size={20}/></button>
       </div>
@@ -1061,7 +1061,7 @@ function FriendTradeModal({me,friend,onClose,onSend,onToast}){
                   <div style={{width:6,height:6,borderRadius:'50%',background:sel?'#fb923c':'#374151',flexShrink:0}}/>
                   <div style={{flex:1,minWidth:0}}>
                     <div style={{fontSize:9,color:'#fff7ed',fontFamily:'"Bebas Neue",sans-serif',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{c.first} {c.last}</div>
-                    <div style={{fontSize:7,color:'#78716c',fontFamily:'"JetBrains Mono",monospace'}}>{c.pps}/s · {c.rarity}</div>
+                    <div style={{fontSize:7,color:'#78716c',fontFamily:'"JetBrains Mono",monospace'}}>{c.pps}/s ï¿½ {c.rarity}</div>
                   </div>
                   {sel&&<span style={{fontSize:9,color:'#fb923c'}}>?</span>}
                 </button>
@@ -1077,7 +1077,7 @@ function FriendTradeModal({me,friend,onClose,onSend,onToast}){
                   <div style={{width:6,height:6,borderRadius:'50%',background:sel?friend.color:'#374151',flexShrink:0}}/>
                   <div style={{flex:1,minWidth:0}}>
                     <div style={{fontSize:9,color:'#fff7ed',fontFamily:'"Bebas Neue",sans-serif',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{c.first} {c.last}</div>
-                    <div style={{fontSize:7,color:'#78716c',fontFamily:'"JetBrains Mono",monospace'}}>{c.pps}/s · {c.rarity}</div>
+                    <div style={{fontSize:7,color:'#78716c',fontFamily:'"JetBrains Mono",monospace'}}>{c.pps}/s ï¿½ {c.rarity}</div>
                   </div>
                   {sel&&<span style={{fontSize:9,color:friend.color}}>?</span>}
                 </button>
@@ -1087,7 +1087,7 @@ function FriendTradeModal({me,friend,onClose,onSend,onToast}){
         </div>
       </div>
       <div style={{padding:'10px 20px',borderTop:'1px solid rgba(255,255,255,0.06)'}}>
-        <input type="text" value={message} onChange={e=>setMessage(e.target.value)} placeholder={`Add a message to ${friend.displayName}…`} style={{width:'100%',boxSizing:'border-box',padding:'8px 12px',borderRadius:8,background:'rgba(0,0,0,0.4)',border:'1px solid rgba(255,255,255,0.08)',color:'#fff7ed',fontFamily:'"Outfit",sans-serif',fontSize:13,outline:'none'}}/>
+        <input type="text" value={message} onChange={e=>setMessage(e.target.value)} placeholder={`Add a message to ${friend.displayName}ï¿½`} style={{width:'100%',boxSizing:'border-box',padding:'8px 12px',borderRadius:8,background:'rgba(0,0,0,0.4)',border:'1px solid rgba(255,255,255,0.08)',color:'#fff7ed',fontFamily:'"Outfit",sans-serif',fontSize:13,outline:'none'}}/>
       </div>
       <div style={{padding:'14px 20px',borderTop:'1px solid rgba(255,255,255,0.06)',display:'flex',gap:10,alignItems:'center'}}>
         <button onClick={()=>{setYourCardIds([]);setTheirCardIds([]);setYourPoints(0);setTheirPoints(0);setMessage('');}} style={{padding:'9px 14px',borderRadius:8,background:'rgba(255,255,255,0.04)',color:'#a8a29e',border:'1px solid rgba(255,255,255,0.08)',cursor:'pointer',fontFamily:'"Bebas Neue",sans-serif',fontSize:12,letterSpacing:'0.1em',display:'flex',alignItems:'center',gap:6}}><RefreshCcw size={12}/>CLEAR</button>
@@ -1125,7 +1125,7 @@ function PendingTradesModal({me,allUsers,trades,onClose,onAccept,onReject}){
           <Inbox size={22} style={{color:'#fb923c'}}/>
           <div>
             <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:22,color:'#fff7ed',letterSpacing:'0.04em'}}>TRADE OFFERS</div>
-            <div style={{fontSize:11,color:'#a8a29e'}}>{inbox.length} incoming · {outbox.length} pending out</div>
+            <div style={{fontSize:11,color:'#a8a29e'}}>{inbox.length} incoming ï¿½ {outbox.length} pending out</div>
           </div>
         </div>
         <button onClick={onClose} style={{background:'transparent',border:'none',color:'#a8a29e',cursor:'pointer',padding:4}}><X size={20}/></button>
@@ -1413,7 +1413,7 @@ function ShelterScreen({me,onBuildShelter,onToast,onAssignAnimal}){
               style={{display:'flex',alignItems:'center',gap:12,padding:'10px 12px',borderRadius:12,border:'1px solid '+(sel?'#86efac':can?'rgba(134,239,172,0.25)':'rgba(255,255,255,0.06)'),background:sel?'rgba(134,239,172,0.1)':'rgba(255,255,255,0.02)',cursor:can?'pointer':'default',opacity:can?1:0.5,textAlign:'left'}}>
               <div style={{width:40,height:40,borderRadius:10,background:'rgba(134,239,172,0.1)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:22,flexShrink:0}}>??</div>
               <div style={{flex:1}}>
-                <div style={{fontSize:13,color:'#fff7ed',...t,letterSpacing:'0.06em'}}>{sz.label} — {sz.desc}</div>
+                <div style={{fontSize:13,color:'#fff7ed',...t,letterSpacing:'0.06em'}}>{sz.label} ï¿½ {sz.desc}</div>
                 <div style={{display:'flex',gap:8,marginTop:3,flexWrap:'wrap'}}>
                   {['wood','stone','glass','brick'].map(m=><span key={m} style={{fontSize:9,color:(mats[m]||0)>=sz[m]?mc[m]:'#ef4444',...mono}}>{me2[m]}{sz[m]} {m}</span>)}
                 </div>
@@ -1596,14 +1596,14 @@ function SpaceScreen({me, users, setUsers, currentUsername, onBack, onOpenPack, 
                 <div style={{fontSize:10,color:'#d6d3d1',marginTop:2,fontFamily:'"Outfit",sans-serif'}}>{m?'One spin, one random moon card':'One spin, one random asteroid card'}</div>
               </div>
             </div>
-            <button onClick={()=>onSpinRoulette(m?'moon_alien':'asteroid_alien')} style={{width:'100%',padding:'10px 14px',borderRadius:10,border:'1px solid '+accent+'88',background:'linear-gradient(135deg, '+accent+'44, '+accent+'11)',color:accent,cursor:'pointer',fontFamily:'"Bebas Neue",sans-serif',fontSize:14,letterSpacing:'0.16em',marginTop:8}}>?? SPIN ROULETTE · {(m?25000:10000).toLocaleString()} PTS</button>
-          <div style={{fontSize:11,color:'#d6d3d1',fontFamily:'"Outfit",sans-serif'}}>Strange new collectors await — trading coming soon</div>
+            <button onClick={()=>onSpinRoulette(m?'moon_alien':'asteroid_alien')} style={{width:'100%',padding:'10px 14px',borderRadius:10,border:'1px solid '+accent+'88',background:'linear-gradient(135deg, '+accent+'44, '+accent+'11)',color:accent,cursor:'pointer',fontFamily:'"Bebas Neue",sans-serif',fontSize:14,letterSpacing:'0.16em',marginTop:8}}>?? SPIN ROULETTE ï¿½ {(m?25000:10000).toLocaleString()} PTS</button>
+          <div style={{fontSize:11,color:'#d6d3d1',fontFamily:'"Outfit",sans-serif'}}>Strange new collectors await ï¿½ trading coming soon</div>
         </div>
 
         <div style={{padding:'10px 14px',borderRadius:14,background:'rgba(20,15,40,0.85)',border:'1px dashed '+accent+'55',marginBottom:12,backdropFilter:'blur(6px)'}}>
           <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:13,letterSpacing:'0.16em',color:accent,marginBottom:8}}>?? EXCLUSIVE PACKS</div>
           <div style={{display:'flex',flexWrap:'wrap',gap:6,justifyContent:'center'}}>
-            {(m ? [{id:'meteroid',name:'METEROID',cost:12000,count:2},{id:'moon',name:'MOON',cost:50000,count:5}] : [{id:'fireball',name:'FIREBALL',cost:8000,count:3},{id:'rocky',name:'ROCKY',cost:15000,count:3},{id:'smash',name:'SMASH',cost:30000,count:5}]).map(p => { const aff = me.points >= p.cost; return <button key={p.id} disabled={!aff} onClick={()=>onOpenPack(p.id, p.count)} style={{padding:'10px 14px',borderRadius:12,border:'1px solid '+accent+'66',background:aff?'rgba(0,0,0,0.5)':'rgba(60,60,60,0.3)',color:aff?accent:'#666',cursor:aff?'pointer':'not-allowed',fontFamily:'"Bebas Neue",sans-serif',fontSize:13,letterSpacing:'0.1em',display:'flex',justifyContent:'space-between',alignItems:'center',gap:10,minWidth:200,opacity:aff?1:0.55}}><span>{p.name} <span style={{fontSize:9,opacity:0.7}}>· {p.count}c</span></span><span style={{fontSize:11,opacity:0.9,fontFamily:'"JetBrains Mono",monospace'}}>{p.cost.toLocaleString()}</span></button>; })}
+            {(m ? [{id:'meteroid',name:'METEROID',cost:12000,count:2},{id:'moon',name:'MOON',cost:50000,count:5}] : [{id:'fireball',name:'FIREBALL',cost:8000,count:3},{id:'rocky',name:'ROCKY',cost:15000,count:3},{id:'smash',name:'SMASH',cost:30000,count:5}]).map(p => { const aff = me.points >= p.cost; return <button key={p.id} disabled={!aff} onClick={()=>onOpenPack(p.id, p.count)} style={{padding:'10px 14px',borderRadius:12,border:'1px solid '+accent+'66',background:aff?'rgba(0,0,0,0.5)':'rgba(60,60,60,0.3)',color:aff?accent:'#666',cursor:aff?'pointer':'not-allowed',fontFamily:'"Bebas Neue",sans-serif',fontSize:13,letterSpacing:'0.1em',display:'flex',justifyContent:'space-between',alignItems:'center',gap:10,minWidth:200,opacity:aff?1:0.55}}><span>{p.name} <span style={{fontSize:9,opacity:0.7}}>ï¿½ {p.count}c</span></span><span style={{fontSize:11,opacity:0.9,fontFamily:'"JetBrains Mono",monospace'}}>{p.cost.toLocaleString()}</span></button>; })}
           </div>
 
         </div>
@@ -1693,12 +1693,12 @@ function MobileNavSheet({onClose,screen,setScreen,setLeaderboardOpen,refreshTrad
   const go = (fn) => { fn(); onClose(); };
   const items = [
     {label:'HOME',sub:'ROSTER',Icon:Home,onPick:()=>go(()=>setScreen('home')),active:screen==='home'},
-    {label:'SHOP',sub:'TRADE · BUY',Icon:Store,onPick:()=>go(()=>setScreen('shop')),active:screen==='shop'},
+    {label:'SHOP',sub:'TRADE ï¿½ BUY',Icon:Store,onPick:()=>go(()=>setScreen('shop')),active:screen==='shop'},
     {label:'COLLECT',sub:'DEEP DIVE',Icon:Library,onPick:()=>go(()=>setScreen('collection')),active:screen==='collection'},
 
     {label:'LEADERS',sub:'FAMILY RANKS',Icon:Trophy,color:'#fbbf24',onPick:()=>go(()=>setLeaderboardOpen(true))},
     {label:'TRAVEL',sub:'EXPEDITIONS',Icon:Rocket,color:'#c4b5fd',onPick:()=>go(()=>setScreen('travel')),active:screen==='travel'},
-    {label:'FOOD',sub:'FEED · VET',Icon:Sparkles,color:'#4ade80',onPick:()=>go(()=>setScreen('food')),active:screen==='food'},
+    {label:'FOOD',sub:'FEED ï¿½ VET',Icon:Sparkles,color:'#4ade80',onPick:()=>go(()=>setScreen('food')),active:screen==='food'},
     {label:'SHELTER',sub:'BUILD',Icon:Sparkles,color:'#86efac',onPick:()=>go(()=>setScreen('shelter')),active:screen==='shelter'},
     {label:'DESIGN',sub:'MINT NEW',Icon:Palette,hero:true,onPick:()=>go(()=>setScreen('design')),active:screen==='design'},
     {label:'INBOX',sub:`${inboxCount} OFFERS`,Icon:Inbox,color:inboxCount>0?'#a855f7':null,onPick:()=>go(()=>{refreshTrades(); setInboxOpen(true);})},
@@ -1715,7 +1715,7 @@ function MobileNavSheet({onClose,screen,setScreen,setLeaderboardOpen,refreshTrad
       <div style={{fontSize:9,letterSpacing:'0.16em',opacity:0.75,fontWeight:600,fontFamily:'"JetBrains Mono",monospace'}}>{it.sub}</div>
     </button>;
   };
-  const music = {label:'MUSIC',sub:'TUNES · LIBRARY',Icon:Music,onPick:()=>go(()=>setMusicStoreOpen(true))};
+  const music = {label:'MUSIC',sub:'TUNES ï¿½ LIBRARY',Icon:Music,onPick:()=>go(()=>setMusicStoreOpen(true))};
   return <div onClick={onClose} style={{position:'fixed',inset:0,zIndex:54,background:'rgba(0,0,0,0.78)',backdropFilter:'blur(10px)',animation:'fade-in 200ms ease-out'}}>
     <div onClick={e=>e.stopPropagation()} style={{position:'absolute',bottom:0,left:0,right:0,background:'linear-gradient(180deg, #1a0f0a, #0c0907)',borderTopLeftRadius:22,borderTopRightRadius:22,borderTop:'1px solid rgba(255,107,0,0.3)',padding:'14px 18px max(28px, env(safe-area-inset-bottom)) 18px',animation:'slide-up 280ms cubic-bezier(.2,.8,.2,1)',maxHeight:'82vh',overflowY:'auto'}}>
       <div style={{width:44,height:4,borderRadius:2,background:'rgba(255,255,255,0.2)',margin:'0 auto 14px'}}/>
@@ -1743,7 +1743,7 @@ function LeaderboardModal({users,currentUsername,onClose}){
         <Trophy size={26} style={{color:'#fbbf24'}}/>
         <div style={{flex:1}}>
           <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:26,color:'#fff7ed',letterSpacing:'0.04em',lineHeight:1}}>LEADERBOARD</div>
-          <div style={{fontSize:11,color:'#a8a29e',marginTop:3,fontFamily:'"JetBrains Mono",monospace',letterSpacing:'0.1em'}}>FAMILY · RANKED BY POINTS</div>
+          <div style={{fontSize:11,color:'#a8a29e',marginTop:3,fontFamily:'"JetBrains Mono",monospace',letterSpacing:'0.1em'}}>FAMILY ï¿½ RANKED BY POINTS</div>
         </div>
         <button onClick={onClose} style={{background:'transparent',border:'none',color:'#a8a29e',cursor:'pointer',padding:4}}><X size={20}/></button>
       </div>
@@ -1766,7 +1766,7 @@ function LeaderboardModal({users,currentUsername,onClose}){
           </div>;
         })}
       </div>
-      <div style={{padding:'10px 22px 16px',borderTop:'1px solid rgba(255,255,255,0.06)',fontSize:10,color:'#52525b',fontFamily:'"JetBrains Mono",monospace',letterSpacing:'0.12em',textAlign:'center'}}>YOUR POINTS UPDATE LIVE · OTHERS SHOW LAST KNOWN TOTAL</div>
+      <div style={{padding:'10px 22px 16px',borderTop:'1px solid rgba(255,255,255,0.06)',fontSize:10,color:'#52525b',fontFamily:'"JetBrains Mono",monospace',letterSpacing:'0.12em',textAlign:'center'}}>YOUR POINTS UPDATE LIVE ï¿½ OTHERS SHOW LAST KNOWN TOTAL</div>
     </div>
   </div>;
 }
@@ -1779,7 +1779,7 @@ function UserMenuModal({me,allUsers,onClose,onSwitchUser,onLogout}){
         <div style={{width:54,height:54,borderRadius:14,background:`${me.color}33`,fontSize:28,display:'flex',alignItems:'center',justifyContent:'center',border:`2px solid ${me.color}`}}>{me.emoji}</div>
         <div style={{flex:1}}>
           <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:24,color:'#fff7ed',letterSpacing:'0.04em',lineHeight:1}}>{me.displayName.toUpperCase()}</div>
-          <div style={{fontSize:11,color:'#a8a29e',marginTop:5,fontFamily:'"JetBrains Mono",monospace',letterSpacing:'0.08em'}}>{me.ownedCards.length} CARDS · {me.points.toLocaleString()} PTS</div>
+          <div style={{fontSize:11,color:'#a8a29e',marginTop:5,fontFamily:'"JetBrains Mono",monospace',letterSpacing:'0.08em'}}>{me.ownedCards.length} CARDS ï¿½ {me.points.toLocaleString()} PTS</div>
         </div>
       </div>
       <div style={{padding:'18px 24px'}}>
@@ -1789,19 +1789,19 @@ function UserMenuModal({me,allUsers,onClose,onSwitchUser,onLogout}){
             <div style={{width:38,height:38,borderRadius:10,background:`${u.color}33`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:20,border:`1px solid ${u.color}`}}>{u.emoji}</div>
             <div style={{flex:1}}>
               <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:16,color:'#fff7ed',letterSpacing:'0.04em',lineHeight:1}}>{u.displayName.toUpperCase()}</div>
-              <div style={{fontSize:10,color:'#a8a29e',marginTop:3,fontFamily:'"JetBrains Mono",monospace'}}>{u.ownedCards.length} cards · {u.points.toLocaleString()} pts</div>
+              <div style={{fontSize:10,color:'#a8a29e',marginTop:3,fontFamily:'"JetBrains Mono",monospace'}}>{u.ownedCards.length} cards ï¿½ {u.points.toLocaleString()} pts</div>
             </div>
             <ArrowRight size={14} style={{color:u.color}}/>
           </button>
         ))}
         <button onClick={onLogout} style={{display:'flex',alignItems:'center',justifyContent:'center',gap:8,width:'100%',padding:'12px',marginTop:6,borderRadius:10,background:'rgba(248,113,113,0.1)',border:'1px solid rgba(248,113,113,0.3)',color:'#fca5a5',cursor:'pointer',fontFamily:'"Bebas Neue",sans-serif',fontSize:13,letterSpacing:'0.1em'}}><LogOut size={14}/>LOG OUT</button>
-        <div style={{marginTop:14,padding:10,borderRadius:8,background:'rgba(168,85,247,0.08)',border:'1px solid rgba(168,85,247,0.2)',fontSize:10.5,color:'#c4a3f0',textAlign:'center',fontStyle:'italic'}}>Friends can create accounts soon · for now play as Tyler or Carter</div>
+        <div style={{marginTop:14,padding:10,borderRadius:8,background:'rgba(168,85,247,0.08)',border:'1px solid rgba(168,85,247,0.2)',fontSize:10.5,color:'#c4a3f0',textAlign:'center',fontStyle:'italic'}}>Friends can create accounts soon ï¿½ for now play as Tyler or Carter</div>
       </div>
     </div>
   </div>;
 }
 
-/* GOAT PHOTOS — login screen face-off art.
+/* GOAT PHOTOS ï¿½ login screen face-off art.
    Embedded as WebP data URLs (~36KB total) so the artifact stays single-file.
    When this migrates to a real project, move these to /public and reference by URL. */
 const LEBRON_PHOTO = "data:image/webp;base64,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";
@@ -1857,7 +1857,7 @@ function GoatPickerScreen({me, onPickGoat}){
             <StatLine label="POWER" value={goat.stats.stl} accent={goat.accent}/>
           </div>
         </div>
-        {/* Single "PLAY AS [ME]" button — themed for the picked goat */}
+        {/* Single "PLAY AS [ME]" button ï¿½ themed for the picked goat */}
         <button onPointerUp={()=>onPickGoat(goat.id)} style={{position:'relative',padding:'13px 16px',borderRadius:10,background:`linear-gradient(135deg, ${me.color}, ${me.color}cc)`,border:'none',color:'#0a0a0a',cursor:'pointer',fontFamily:'"Bebas Neue",sans-serif',fontSize:17,letterSpacing:'0.08em',display:'flex',alignItems:'center',justifyContent:'space-between',gap:8,boxShadow:isHovered?`0 6px 18px ${me.color}99`:`0 3px 10px ${me.color}66`,transition:'all 220ms',zIndex:10}} onMouseEnter={e=>{e.currentTarget.style.transform='translateX(2px)';}} onMouseLeave={e=>{e.currentTarget.style.transform='translateX(0)';}}>
           <span style={{display:'flex',alignItems:'center',gap:8}}>
             <span style={{fontSize:20,lineHeight:1}}>{me.emoji}</span>
@@ -1870,21 +1870,21 @@ function GoatPickerScreen({me, onPickGoat}){
   };
 
   return <div style={{minHeight:'100vh',width:'100%',background:`radial-gradient(ellipse at 30% 20%, rgba(10,80,40,0.35) 0%, transparent 50%),radial-gradient(ellipse at 70% 20%, rgba(15,110,86,0.25) 0%, transparent 50%),radial-gradient(ellipse at 50% 100%, rgba(74,222,128,0.1) 0%, transparent 60%),linear-gradient(180deg, #060f08, #030a05)`,padding:'28px 20px 32px',fontFamily:'"Outfit",sans-serif',display:'flex',flexDirection:'column',alignItems:'center'}}>
-    {/* Header — the badge is the brand */}
+    {/* Header ï¿½ the badge is the brand */}
     <div style={{textAlign:'center',marginBottom:14,display:'flex',flexDirection:'column',alignItems:'center'}}>
-      <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:14,color:'#a8a29e',letterSpacing:'0.32em',marginBottom:10}}>WELCOME {me.displayName.toUpperCase()} · PICK YOUR SPIRIT ANIMAL</div>
+      <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:14,color:'#a8a29e',letterSpacing:'0.32em',marginBottom:10}}>WELCOME {me.displayName.toUpperCase()} ï¿½ PICK YOUR SPIRIT ANIMAL</div>
       <LogoBadge size={200} accent="#fb923c" primary="#fff7ed"/>
     </div>
     {/* PLAY!! stamp */}
     <div style={{display:'inline-flex',alignItems:'center',gap:10,padding:'10px 28px',borderRadius:14,background:'linear-gradient(135deg, #22c55e, #15803d)',color:'#f0fdf4',fontFamily:'"Bebas Neue",sans-serif',fontSize:32,letterSpacing:'0.12em',boxShadow:'0 8px 28px rgba(74,222,128,0.4), inset 0 -3px 0 rgba(0,0,0,0.3)',marginBottom:10,transform:'rotate(-2deg)'}}>
-      P · L · A · Y <span style={{fontSize:38,marginLeft:4}}>!!</span>
+      P ï¿½ L ï¿½ A ï¿½ Y <span style={{fontSize:38,marginLeft:4}}>!!</span>
     </div>
     <div style={{fontSize:11,color:'#a8a29e',letterSpacing:'0.18em',fontFamily:'"JetBrains Mono",monospace',marginBottom:24}}>CHOOSE YOUR ECO SPIRIT</div>
 
     {/* GOAT face-off */}
     <div style={{position:'relative',display:'flex',gap:20,alignItems:'stretch',justifyContent:'center',flexWrap:'wrap',width:'100%',maxWidth:880,margin:'0 auto'}}>
       <PlayerSide goat={lebron} side="left" isHovered={hovered==='lebron'} onHover={()=>setHovered('lebron')} onLeave={()=>setHovered(null)}/>
-      {/* VS badge — visible on wide screens */}
+      {/* VS badge ï¿½ visible on wide screens */}
       <div style={{display:'flex',alignItems:'center',justifyContent:'center',position:'absolute',top:'50%',left:'50%',transform:'translate(-50%,-50%)',zIndex:5,pointerEvents:'none'}}>
         <div style={{width:64,height:64,borderRadius:'50%',background:'radial-gradient(circle at 30% 30%, #fff7ed, #c2410c 70%)',color:'#0a0a0a',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'"Bebas Neue",sans-serif',fontSize:26,letterSpacing:'0.04em',boxShadow:'0 0 30px rgba(255,107,0,0.6), 0 4px 14px rgba(0,0,0,0.6)',border:'3px solid #fb923c',pointerEvents:'none'}}>VS</div>
       </div>
@@ -1893,7 +1893,7 @@ function GoatPickerScreen({me, onPickGoat}){
   </div>;
 }
 
-// Legacy LoginScreen — replaced by GoatPickerScreen + App.jsx auth flow.
+// Legacy LoginScreen ï¿½ replaced by GoatPickerScreen + App.jsx auth flow.
 // Kept for reference; not rendered anywhere.
 function LoginScreen({users,onLogin,loading}){
   const [hovered,setHovered] = useState(null);
@@ -1933,7 +1933,7 @@ function LoginScreen({users,onLogin,loading}){
         </div>
         {/* Tagline */}
         <div style={{position:'relative',padding:'4px 10px',borderRadius:4,background:`${goat.accent}cc`,color:goat.primary,fontFamily:'"Bebas Neue",sans-serif',fontSize:11,letterSpacing:'0.15em',alignSelf:'flex-start',marginBottom:12,fontWeight:700}}>{goat.nickname}</div>
-        {/* Player photo — falls back to SVG pose if no photo provided */}
+        {/* Player photo ï¿½ falls back to SVG pose if no photo provided */}
         <div style={{position:'relative',flex:1,minHeight:260,maxHeight:300,display:'flex',alignItems:'center',justifyContent:'center',color:goat.accent,filter:`drop-shadow(0 12px 24px rgba(0,0,0,0.5)) drop-shadow(0 0 18px ${goat.accent}55)`,marginBottom:14}}>
           {goat.photo ? (
             (() => {
@@ -1958,8 +1958,8 @@ function LoginScreen({users,onLogin,loading}){
           </div>
         </div>
         {/* "Play with this GOAT" label */}
-        <div style={{position:'relative',fontFamily:'"JetBrains Mono",monospace',fontSize:9,color:'#fff7edaa',letterSpacing:'0.18em',textAlign:'center',marginBottom:8}}>VIBE WITH {goat.last} — PICK YOUR ACCOUNT</div>
-        {/* Play buttons — one per user account */}
+        <div style={{position:'relative',fontFamily:'"JetBrains Mono",monospace',fontSize:9,color:'#fff7edaa',letterSpacing:'0.18em',textAlign:'center',marginBottom:8}}>VIBE WITH {goat.last} ï¿½ PICK YOUR ACCOUNT</div>
+        {/* Play buttons ï¿½ one per user account */}
         <div style={{position:'relative',display:'flex',flexDirection:'column',gap:7}}>
           {userList.map(u => (
             <button key={u.username} onClick={()=>onLogin(u.username, goat.id)} style={{padding:'11px 14px',borderRadius:10,background:`linear-gradient(135deg, ${u.color}, ${u.color}cc)`,border:'none',color:'#0a0a0a',cursor:'pointer',fontFamily:'"Bebas Neue",sans-serif',fontSize:15,letterSpacing:'0.08em',display:'flex',alignItems:'center',justifyContent:'space-between',gap:8,boxShadow:isHovered?`0 6px 18px ${u.color}99`:`0 3px 10px ${u.color}66`,transition:'all 220ms'}} onMouseEnter={e=>{e.currentTarget.style.transform='translateX(2px)';}} onMouseLeave={e=>{e.currentTarget.style.transform='translateX(0)';}}>
@@ -1978,25 +1978,25 @@ function LoginScreen({users,onLogin,loading}){
   };
 
   return <div style={{minHeight:'100vh',width:'100%',background:`radial-gradient(ellipse at 30% 20%, rgba(10,80,40,0.35) 0%, transparent 50%),radial-gradient(ellipse at 70% 20%, rgba(15,110,86,0.25) 0%, transparent 50%),radial-gradient(ellipse at 50% 100%, rgba(74,222,128,0.1) 0%, transparent 60%),linear-gradient(180deg, #060f08, #030a05)`,padding:'28px 20px 32px',fontFamily:'"Outfit",sans-serif',display:'flex',flexDirection:'column',alignItems:'center'}}>
-    {/* Header — the badge is the brand */}
+    {/* Header ï¿½ the badge is the brand */}
     <div style={{textAlign:'center',marginBottom:14,display:'flex',flexDirection:'column',alignItems:'center'}}>
       <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:14,color:'#a8a29e',letterSpacing:'0.32em',marginBottom:10}}>WELCOME TO</div>
       <LogoBadge size={200} accent="#fb923c" primary="#fff7ed"/>
     </div>
     {/* PLAY!! stamp */}
     <div style={{display:'inline-flex',alignItems:'center',gap:10,padding:'10px 28px',borderRadius:14,background:'linear-gradient(135deg, #22c55e, #15803d)',color:'#f0fdf4',fontFamily:'"Bebas Neue",sans-serif',fontSize:32,letterSpacing:'0.12em',boxShadow:'0 8px 28px rgba(74,222,128,0.4), inset 0 -3px 0 rgba(0,0,0,0.3)',marginBottom:10,transform:'rotate(-2deg)'}}>
-      P · L · A · Y <span style={{fontSize:38,marginLeft:4}}>!!</span>
+      P ï¿½ L ï¿½ A ï¿½ Y <span style={{fontSize:38,marginLeft:4}}>!!</span>
     </div>
-    <div style={{fontSize:11,color:'#a8a29e',letterSpacing:'0.18em',fontFamily:'"JetBrains Mono",monospace',marginBottom:24}}>PICK YOUR SPIRIT ANIMAL · BUILD THE COLLECTION</div>
+    <div style={{fontSize:11,color:'#a8a29e',letterSpacing:'0.18em',fontFamily:'"JetBrains Mono",monospace',marginBottom:24}}>PICK YOUR SPIRIT ANIMAL ï¿½ BUILD THE COLLECTION</div>
 
     {loading ? (
-      <div style={{padding:40,color:'#fb923c',fontFamily:'"JetBrains Mono",monospace',fontSize:13,letterSpacing:'0.15em'}}>LOADING SAVED DATA…</div>
+      <div style={{padding:40,color:'#fb923c',fontFamily:'"JetBrains Mono",monospace',fontSize:13,letterSpacing:'0.15em'}}>LOADING SAVED DATAï¿½</div>
     ) : (
       <>
         {/* GOAT face-off */}
         <div style={{position:'relative',display:'flex',gap:20,alignItems:'stretch',justifyContent:'center',flexWrap:'wrap',width:'100%',maxWidth:880,margin:'0 auto'}}>
           <PlayerSide goat={lebron} side="left" isHovered={hovered==='lebron'} onHover={()=>setHovered('lebron')} onLeave={()=>setHovered(null)}/>
-          {/* VS badge — visible on wide screens */}
+          {/* VS badge ï¿½ visible on wide screens */}
           <div style={{display:'flex',alignItems:'center',justifyContent:'center',position:'absolute',top:'50%',left:'50%',transform:'translate(-50%,-50%)',zIndex:5,pointerEvents:'none'}}>
             <div style={{width:64,height:64,borderRadius:'50%',background:'radial-gradient(circle at 30% 30%, #fff7ed, #c2410c 70%)',color:'#0a0a0a',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'"Bebas Neue",sans-serif',fontSize:26,letterSpacing:'0.04em',boxShadow:'0 0 30px rgba(255,107,0,0.6), 0 4px 14px rgba(0,0,0,0.6)',border:'3px solid #fb923c'}}>VS</div>
           </div>
@@ -2004,7 +2004,7 @@ function LoginScreen({users,onLogin,loading}){
         </div>
         {/* Footer: new account placeholder */}
         <div style={{maxWidth:520,width:'100%',marginTop:20,display:'flex',flexDirection:'column',alignItems:'center',gap:10}}>
-          <button disabled style={{padding:'12px 18px',borderRadius:12,background:'rgba(255,255,255,0.02)',border:'1px dashed rgba(255,255,255,0.1)',color:'#52525b',fontSize:13,fontFamily:'"Bebas Neue",sans-serif',letterSpacing:'0.1em',cursor:'not-allowed',display:'flex',alignItems:'center',justifyContent:'center',gap:8,width:'100%',maxWidth:340}}><Lock size={13}/>NEW ACCOUNT · COMING SOON</button>
+          <button disabled style={{padding:'12px 18px',borderRadius:12,background:'rgba(255,255,255,0.02)',border:'1px dashed rgba(255,255,255,0.1)',color:'#52525b',fontSize:13,fontFamily:'"Bebas Neue",sans-serif',letterSpacing:'0.1em',cursor:'not-allowed',display:'flex',alignItems:'center',justifyContent:'center',gap:8,width:'100%',maxWidth:340}}><Lock size={13}/>NEW ACCOUNT ï¿½ COMING SOON</button>
           <div style={{fontSize:9.5,color:'#52525b',fontFamily:'"JetBrains Mono",monospace',letterSpacing:'0.18em'}}>POINTS ONLY ACCRUE WHILE LOGGED IN</div>
         </div>
       </>
@@ -2127,15 +2127,15 @@ function HomeScreen({me,pendingCount,onClaimDaily,onOpenPack,onOpenInbox,onOpenC
 
   return <>
     <div style={{padding:'20px 28px 4px',display:'flex',gap:12,flexWrap:'wrap'}}>
-      <QuickAction icon={Gift} label={me.dailyClaimed?'DAILY · CLAIMED':'CLAIM DAILY'} sub={me.dailyClaimed?'come back tomorrow':`+${DAILY_REWARD.toLocaleString()} eco free`} accent={me.dailyClaimed?'#52525b':'#4ade80'} badge={!me.dailyClaimed&&'!'} onClick={onClaimDaily} disabled={me.dailyClaimed}/>
+      <QuickAction icon={Gift} label={me.dailyClaimed?'DAILY ï¿½ CLAIMED':'CLAIM DAILY'} sub={me.dailyClaimed?'come back tomorrow':`+${DAILY_REWARD.toLocaleString()} eco free`} accent={me.dailyClaimed?'#52525b':'#4ade80'} badge={!me.dailyClaimed&&'!'} onClick={onClaimDaily} disabled={me.dailyClaimed}/>
       <QuickAction icon={Package} label="OPEN FREE PACK" sub={me.packsAvailable>0?`${me.packsAvailable} pack ready`:'come back tomorrow'} accent={me.packsAvailable>0?'#fb923c':'#52525b'} badge={me.packsAvailable>0&&me.packsAvailable} onClick={()=>me.packsAvailable>0&&onOpenPack('daily')} disabled={me.packsAvailable<=0}/>
       <QuickAction icon={Mail} label="TRADE OFFERS" sub={pendingCount>0?`${pendingCount} waiting for you`:'all clear'} accent={pendingCount>0?'#a855f7':'#52525b'} badge={pendingCount>0&&pendingCount} onClick={onOpenInbox}/>
-      <QuickAction icon={Gamepad2} label="MINI GAMES" sub="coming soon · earn points" accent="#52525b" badge="SOON" onClick={()=>onShowComingSoon&&onShowComingSoon()} disabled={false}/>
+      <QuickAction icon={Gamepad2} label="MINI GAMES" sub="coming soon ï¿½ earn points" accent="#52525b" badge="SOON" onClick={()=>onShowComingSoon&&onShowComingSoon()} disabled={false}/>
     </div>
     <div style={{padding:'24px 28px 16px',display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:12}}>
       <div>
         <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:38,lineHeight:0.9,letterSpacing:'0.02em'}}>{me.displayName.toUpperCase()}'S ANIMALS</div>
-        <div style={{fontSize:12,color:'#a8a29e',marginTop:2}}>{visible.length} of {me.ownedCards.length} animals · click any for details</div>
+        <div style={{fontSize:12,color:'#a8a29e',marginTop:2}}>{visible.length} of {me.ownedCards.length} animals ï¿½ click any for details</div>
       </div>
       <div style={{display:'flex',alignItems:'center',gap:6,flexWrap:'wrap'}}>
         <Filter size={13} style={{color:'#78716c',marginRight:4}}/>
@@ -2204,7 +2204,7 @@ function ShopScreen({me,friends,onBuyCard,onOpenPack,onStartAITrade,onStartFrien
             <span style={{fontSize:18}}>{f.emoji}</span>
             <div style={{textAlign:'left'}}>
               <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:13,color:'#fff7ed',letterSpacing:'0.05em',lineHeight:1}}>{f.displayName.toUpperCase()}</div>
-              <div style={{fontSize:9.5,color:f.color,fontFamily:'"JetBrains Mono",monospace',marginTop:2}}>{f.ownedCards.length} CARDS · {f.points.toLocaleString()} PTS</div>
+              <div style={{fontSize:9.5,color:f.color,fontFamily:'"JetBrains Mono",monospace',marginTop:2}}>{f.ownedCards.length} CARDS ï¿½ {f.points.toLocaleString()} PTS</div>
             </div>
             <Send size={12} style={{color:f.color,marginLeft:4}}/>
           </button>
@@ -2230,14 +2230,14 @@ function ShopScreen({me,friends,onBuyCard,onOpenPack,onStartAITrade,onStartFrien
         <div style={{width:78,height:78,borderRadius:18,background:`linear-gradient(160deg, ${trader.color}55, ${trader.color}22)`,border:`2px solid ${trader.color}`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:46,flexShrink:0,boxShadow:`0 8px 30px ${trader.color}44`}}>{trader.emoji}</div>
         <div style={{flex:1}}>
           <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:30,color:'#fff7ed',letterSpacing:'0.03em',lineHeight:1}}>{trader.name.toUpperCase()}</div>
-          <div style={{fontSize:12,color:trader.color,fontFamily:'"JetBrains Mono",monospace',letterSpacing:'0.12em',marginTop:4}}>{trader.vibe} · {trader.inventory.length} CARDS IN STOCK</div>
+          <div style={{fontSize:12,color:trader.color,fontFamily:'"JetBrains Mono",monospace',letterSpacing:'0.12em',marginTop:4}}>{trader.vibe} ï¿½ {trader.inventory.length} CARDS IN STOCK</div>
           <div style={{fontSize:12,color:'#a8a29e',marginTop:6,fontStyle:'italic'}}>"{trader.bio}"</div>
         </div>
         <button onClick={()=>onStartAITrade(trader)} style={{padding:'12px 18px',borderRadius:10,background:'linear-gradient(135deg, #ff6b00, #c2410c)',color:'#fff7ed',border:'none',cursor:'pointer',fontFamily:'"Bebas Neue",sans-serif',fontSize:13,letterSpacing:'0.1em',display:'flex',alignItems:'center',gap:6,flexShrink:0}}><ArrowLeftRight size={14}/>PROPOSE TRADE</button>
       </div>
 
       <div style={{padding:'18px 22px'}}>
-        <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:16,color:'#fff7ed',letterSpacing:'0.12em',marginBottom:6}}>UNDER THE GLASS · BUY OUTRIGHT</div>
+        <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:16,color:'#fff7ed',letterSpacing:'0.12em',marginBottom:6}}>UNDER THE GLASS ï¿½ BUY OUTRIGHT</div>
         <div style={{fontSize:11,color:'#a8a29e',marginBottom:14}}>Pay points, take it home. Click any card for full details & career highlights.</div>
         <div style={{position:'relative',padding:'18px 14px',borderRadius:14,background:'linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01))',border:'1px solid rgba(255,255,255,0.08)',boxShadow:'inset 0 0 30px rgba(255,255,255,0.02), inset 0 1px 0 rgba(255,255,255,0.08)'}}>
           <div style={{position:'absolute',top:0,left:0,right:0,height:60,background:'linear-gradient(180deg, rgba(255,255,255,0.08), transparent)',borderRadius:'14px 14px 0 0',pointerEvents:'none'}}/>
@@ -2259,10 +2259,10 @@ function ShopScreen({me,friends,onBuyCard,onOpenPack,onStartAITrade,onStartFrien
       <div style={{padding:'4px 22px 24px'}}>
         <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:16,color:'#fff7ed',letterSpacing:'0.12em',marginTop:14,marginBottom:14}}>PACK RACK</div>
         <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit, minmax(180px, 1fr))',gap:12}}>
-          <PackTile kind="daily" title="DAILY PACK" subtitle="3 cards · low rare odds" priceLabel="FREE · 1/DAY" accent="#fb923c" disabled={me.packsAvailable<=0} onClick={()=>onOpenPack('daily')}/>
-          <PackTile kind="premium" title="PREMIUM PACK" subtitle="boosted rare odds · choose size" accent="#fbbf24" basePrice={PACK_TYPES.premium.price} points={me.points} onOpenSize={(sz)=>onOpenPack('premium',sz)}/>
-          <PackTile kind="diamond" title="DIAMOND PACK" subtitle="platinum+ guaranteed × 1" accent="#67e8f9" basePrice={PACK_TYPES.diamond.price} points={me.points} onOpenSize={(sz)=>onOpenPack('diamond',sz)}/>
-          <PackTile kind="supernova" title="SUPERNOVA PACK" subtitle="diamond guaranteed · 30% supernova" accent="#ec4899" basePrice={PACK_TYPES.supernova.price} points={me.points} onOpenSize={(sz)=>onOpenPack('supernova',sz)}/>
+          <PackTile kind="daily" title="DAILY PACK" subtitle="3 cards ï¿½ low rare odds" priceLabel="FREE ï¿½ 1/DAY" accent="#fb923c" disabled={me.packsAvailable<=0} onClick={()=>onOpenPack('daily')}/>
+          <PackTile kind="premium" title="PREMIUM PACK" subtitle="boosted rare odds ï¿½ choose size" accent="#fbbf24" basePrice={PACK_TYPES.premium.price} points={me.points} onOpenSize={(sz)=>onOpenPack('premium',sz)}/>
+          <PackTile kind="diamond" title="DIAMOND PACK" subtitle="platinum+ guaranteed ï¿½ 1" accent="#67e8f9" basePrice={PACK_TYPES.diamond.price} points={me.points} onOpenSize={(sz)=>onOpenPack('diamond',sz)}/>
+          <PackTile kind="supernova" title="SUPERNOVA PACK" subtitle="diamond guaranteed ï¿½ 30% supernova" accent="#ec4899" basePrice={PACK_TYPES.supernova.price} points={me.points} onOpenSize={(sz)=>onOpenPack('supernova',sz)}/>
         </div>
       </div>
     </div>
@@ -2475,7 +2475,7 @@ function DesignScreen({points,onMint,onToast,editingCard:incomingEdit,onCancelEd
   const heightFt = Math.floor(height/12);
   const heightIn = height%12;
 
-  const previewCard = {id:'preview',first:first||'YOUR',last:last||'PLAYER',number,pps,rarity,material,team,tag:editingCard?.tag||`CUSTOM · ${position}`,position,height,portrait,signatureMove,pose:editingCard?.pose};
+  const previewCard = {id:'preview',first:first||'YOUR',last:last||'PLAYER',number,pps,rarity,material,team,tag:editingCard?.tag||`CUSTOM ï¿½ ${position}`,position,height,portrait,signatureMove,pose:editingCard?.pose};
   const canMint = isEditing ? (first.trim() && last.trim()) : (points>=cost && first.trim() && last.trim());
 
   const submit = () => {
@@ -2507,7 +2507,7 @@ function DesignScreen({points,onMint,onToast,editingCard:incomingEdit,onCancelEd
     <div style={{marginBottom:20,display:'flex',justifyContent:'space-between',alignItems:'flex-end',gap:12,flexWrap:'wrap'}}>
       <div>
         <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:38,lineHeight:0.9,letterSpacing:'0.02em'}}>{isEditing?'EDIT CARD':'DESIGN STUDIO'}</div>
-        <div style={{fontSize:12,color:'#a8a29e',marginTop:4}}>{isEditing?`Editing ${editingCard.first} ${editingCard.last} · changes save in place, no cost`:'Draw the portrait, dial the stats, mint it. Higher attributes = better rarity AND material.'}</div>
+        <div style={{fontSize:12,color:'#a8a29e',marginTop:4}}>{isEditing?`Editing ${editingCard.first} ${editingCard.last} ï¿½ changes save in place, no cost`:'Draw the portrait, dial the stats, mint it. Higher attributes = better rarity AND material.'}</div>
       </div>
       <div style={{display:'flex',gap:8}}>
         {isEditing && <button onClick={cancelEdit} style={{padding:'8px 14px',borderRadius:8,background:'rgba(255,255,255,0.05)',border:'1px solid rgba(255,255,255,0.1)',color:'#a8a29e',cursor:'pointer',fontFamily:'"Bebas Neue",sans-serif',fontSize:12,letterSpacing:'0.1em',display:'flex',alignItems:'center',gap:6}}><X size={13}/>CANCEL EDIT</button>}
@@ -2537,10 +2537,10 @@ function DesignScreen({points,onMint,onToast,editingCard:incomingEdit,onCancelEd
                 </button>;
               })}
             </div>
-            {!isEditing && <div style={{fontSize:9.5,color:'#78716c',marginTop:6,fontFamily:'"JetBrains Mono",monospace',letterSpacing:'0.08em'}}>? PREMIUM TEAMS · +5,000 PTS COST</div>}
+            {!isEditing && <div style={{fontSize:9.5,color:'#78716c',marginTop:6,fontFamily:'"JetBrains Mono",monospace',letterSpacing:'0.08em'}}>? PREMIUM TEAMS ï¿½ +5,000 PTS COST</div>}
           </div>
         </DesignBlock>
-        <DesignBlock title="SIGNATURE MOVE · optional badge on card">
+        <DesignBlock title="SIGNATURE MOVE ï¿½ optional badge on card">
           <div style={{display:'grid',gridTemplateColumns:'repeat(5, 1fr)',gap:6}}>
             <button onClick={()=>setSignatureMove(null)} style={{padding:'10px 0',borderRadius:6,background:!signatureMove?'#fb923c':'rgba(255,255,255,0.04)',color:!signatureMove?'#0a0a0a':'#a8a29e',border:'none',cursor:'pointer',fontFamily:'"Bebas Neue",sans-serif',fontSize:11,letterSpacing:'0.08em'}}>NONE</button>
             {sigMoves.map(s=>(
@@ -2559,13 +2559,13 @@ function DesignScreen({points,onMint,onToast,editingCard:incomingEdit,onCancelEd
               </div>
             </div>
             <div>
-              <Lab>HEIGHT · {heightFt}'{heightIn}"</Lab>
+              <Lab>HEIGHT ï¿½ {heightFt}'{heightIn}"</Lab>
               <input type="range" min={64} max={92} value={height} onChange={e=>setHeight(parseInt(e.target.value))} style={{width:'100%',accentColor:'#fb923c',marginTop:8}}/>
               <div style={{display:'flex',justifyContent:'space-between',fontSize:9,color:'#52525b',fontFamily:'"JetBrains Mono",monospace',marginTop:2}}><span>5'4"</span><span>7'8"</span></div>
             </div>
           </div>
         </DesignBlock>
-        {!isEditing && <DesignBlock title={`ATTRIBUTES · ${attrTotal} TOTAL`}>
+        {!isEditing && <DesignBlock title={`ATTRIBUTES ï¿½ ${attrTotal} TOTAL`}>
           <Slider label="SCORING" value={scoring} onChange={setScoring}/>
           <Slider label="DEFENSE" value={defense} onChange={setDefense}/>
           <Slider label="SPEED" value={speed} onChange={setSpeed}/>
@@ -2585,7 +2585,7 @@ function DesignScreen({points,onMint,onToast,editingCard:incomingEdit,onCancelEd
         </div>
         {isEditing ? (
           <div style={{marginTop:12,padding:'14px 14px',borderRadius:12,background:'linear-gradient(135deg, rgba(168,85,247,0.18), rgba(109,40,217,0.1))',border:'1px solid rgba(168,85,247,0.4)',textAlign:'center'}}>
-            <div style={{fontSize:10,color:'#c4b5fd',letterSpacing:'0.18em',fontFamily:'"JetBrains Mono",monospace'}}>EDITING IN PLACE · FREE</div>
+            <div style={{fontSize:10,color:'#c4b5fd',letterSpacing:'0.18em',fontFamily:'"JetBrains Mono",monospace'}}>EDITING IN PLACE ï¿½ FREE</div>
             <button onClick={submit} disabled={!canMint} style={{marginTop:12,width:'100%',padding:'12px 0',borderRadius:8,background:canMint?'linear-gradient(135deg, #a855f7, #6d28d9)':'#3f3f46',color:'#fff7ed',border:'none',cursor:canMint?'pointer':'not-allowed',fontFamily:'"Bebas Neue",sans-serif',fontSize:14,letterSpacing:'0.12em',display:'flex',alignItems:'center',justifyContent:'center',gap:6}}>
               <Check size={14}/>SAVE CHANGES
             </button>
@@ -2610,7 +2610,7 @@ function DesignScreen({points,onMint,onToast,editingCard:incomingEdit,onCancelEd
 }
 
 /* ==========================================================
-   SUPERNOVA CELEBRATION — fullscreen confetti + fanfare
+   SUPERNOVA CELEBRATION ï¿½ fullscreen confetti + fanfare
    ========================================================== */
 function MoonCelebration({card,onDone}){
   useEffect(()=>{
@@ -2705,14 +2705,14 @@ function SupernovaCelebration({card,onDone}){
     <div style={{position:'absolute',top:'40%',left:'50%',transform:'translate(-50%,-50%)',textAlign:'center',animation:'sn-banner 2.4s cubic-bezier(.2,.8,.2,1)',pointerEvents:'none'}}>
       <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:'clamp(48px, 12vw, 96px)',background:'linear-gradient(90deg, #ec4899, #a855f7, #3b82f6, #fbbf24, #ec4899)',backgroundSize:'200% 100%',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',letterSpacing:'0.04em',lineHeight:0.9,filter:'drop-shadow(0 6px 20px rgba(236,72,153,0.6))',animation:'sn-shimmer 3s linear infinite'}}>SUPERNOVA!</div>
       <div style={{marginTop:14,fontFamily:'"Bebas Neue",sans-serif',fontSize:'clamp(20px,4vw,32px)',color:'#fff7ed',letterSpacing:'0.12em',textShadow:'0 4px 12px rgba(0,0,0,0.6)'}}>{card.first} {card.last}</div>
-      <div style={{marginTop:6,fontSize:11,color:'#fcd34d',fontFamily:'"JetBrains Mono",monospace',letterSpacing:'0.2em'}}>1-OF-1 · 25× MULTIPLIER</div>
+      <div style={{marginTop:6,fontSize:11,color:'#fcd34d',fontFamily:'"JetBrains Mono",monospace',letterSpacing:'0.2em'}}>1-OF-1 ï¿½ 25ï¿½ MULTIPLIER</div>
     </div>
     <div style={{position:'absolute',bottom:30,left:0,right:0,textAlign:'center',color:'#fff7ed99',fontFamily:'"JetBrains Mono",monospace',fontSize:11,letterSpacing:'0.2em'}}>tap to continue</div>
   </div>;
 }
 
 /* ==========================================================
-   MUSIC SYSTEM — Tone.js synthesized tracks
+   MUSIC SYSTEM ï¿½ Tone.js synthesized tracks
    ========================================================== */
 const TRACK_BUILDERS = {
   vibes: () => {
@@ -2792,7 +2792,7 @@ function MusicStore({me,onClose,onBuy,onPlay,currentTrackId}){
       <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:18}}>
         <div>
           <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:30,letterSpacing:'0.04em',display:'flex',alignItems:'center',gap:10}}><Music size={26} style={{color:'#4ade80'}}/>NATURE SOUNDS</div>
-          <div style={{fontSize:11,color:'#a8a29e',marginTop:2}}>Buy tracks with points · synthesized live</div>
+          <div style={{fontSize:11,color:'#a8a29e',marginTop:2}}>Buy tracks with points ï¿½ synthesized live</div>
         </div>
         <button onClick={onClose} style={{background:'rgba(255,255,255,0.05)',border:'1px solid rgba(255,255,255,0.1)',color:'#fff7ed',cursor:'pointer',padding:8,borderRadius:8}}><X size={18}/></button>
       </div>
@@ -2810,7 +2810,7 @@ function MusicStore({me,onClose,onBuy,onPlay,currentTrackId}){
               <div style={{fontSize:11,color:'#a8a29e',marginTop:3}}>{t.subtitle}</div>
               <div style={{display:'flex',gap:8,marginTop:5,fontSize:9,fontFamily:'"JetBrains Mono",monospace',letterSpacing:'0.1em'}}>
                 <span style={{color:t.color}}>{t.vibe}</span>
-                <span style={{color:'#52525b'}}>·</span>
+                <span style={{color:'#52525b'}}>ï¿½</span>
                 <span style={{color:'#78716c'}}>{t.tempo}</span>
               </div>
             </div>
@@ -2857,7 +2857,7 @@ function MusicPlayer({currentTrackId,onTogglePlay,onOpenStore,muted,onToggleMute
 }
 
 /* ==========================================================
-   COMING SOON MODAL — generic
+   COMING SOON MODAL ï¿½ generic
    ========================================================== */
 function ComingSoonModal({title,body,onClose}){
   return <div style={{position:'fixed',inset:0,zIndex:170,background:'rgba(0,0,0,0.85)',backdropFilter:'blur(10px)',display:'flex',alignItems:'center',justifyContent:'center',padding:18}} onClick={onClose}>
@@ -2873,7 +2873,7 @@ function ComingSoonModal({title,body,onClose}){
 }
 
 /* ==========================================================
-   COLLECTION SCREEN — full deep-dive with sort/filter/search
+   COLLECTION SCREEN ï¿½ full deep-dive with sort/filter/search
    ========================================================== */
 /* BINDERS */
 function findCardSlot(binderData, cardId){
@@ -3038,7 +3038,7 @@ function CollectionScreen({me,onOpenCard,onMergeDuplicates}){
     return sorted;
   },[looseAll,search,rarityFilter,materialFilter,sort]);
 
-  // Stats — account for stacks
+  // Stats ï¿½ account for stacks
   const totalEarn = looseAll.reduce((s,c)=>s + effPps(c.pps, getCardState(me,c.id).damage)*(c.qty||1), 0);
   const totalValue = looseAll.reduce((s,c)=>s + getCardValue(c)*(c.qty||1), 0);
   const totalCardsCount = looseAll.reduce((s,c)=>s + (c.qty||1), 0);
@@ -3061,7 +3061,7 @@ function CollectionScreen({me,onOpenCard,onMergeDuplicates}){
     <div style={{marginBottom:18,display:'flex',alignItems:'flex-end',justifyContent:'space-between',flexWrap:'wrap',gap:12}}>
       <div>
         <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:38,lineHeight:0.9,letterSpacing:'0.02em'}}>{me.displayName.toUpperCase()}'S COLLECTION</div>
-        <div style={{fontSize:12,color:'#a8a29e',marginTop:4}}>{looseAll.length} loose{totalCardsCount !== looseAll.length ? ` · ${totalCardsCount} total` : ''} · {totalEarn}/sec · worth {totalValue.toLocaleString()} pts</div>
+        <div style={{fontSize:12,color:'#a8a29e',marginTop:4}}>{looseAll.length} loose{totalCardsCount !== looseAll.length ? ` ï¿½ ${totalCardsCount} total` : ''} ï¿½ {totalEarn}/sec ï¿½ worth {totalValue.toLocaleString()} pts</div>
       </div>
       {dupeCount > 0 && onMergeDuplicates && (
         <button onClick={onMergeDuplicates} title={`Stack ${dupeCount} duplicate${dupeCount===1?'':'s'} into single cards with quantity`} style={{padding:'9px 14px',borderRadius:10,background:'linear-gradient(135deg, #fbbf24, #d97706)',color:'#0a0a0a',border:'none',cursor:'pointer',fontFamily:'"Bebas Neue",sans-serif',fontSize:12,letterSpacing:'0.1em',display:'flex',alignItems:'center',gap:7,boxShadow:'0 4px 14px rgba(251,191,36,0.4)'}}>
@@ -3083,7 +3083,7 @@ function CollectionScreen({me,onOpenCard,onMergeDuplicates}){
     <div style={{display:'flex',gap:10,marginBottom:12,flexWrap:'wrap'}}>
       <div style={{flex:1,minWidth:200,position:'relative'}}>
         <Search size={14} style={{position:'absolute',left:11,top:'50%',transform:'translateY(-50%)',color:'#78716c'}}/>
-        <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="search cards by name, team, tag…" style={{width:'100%',padding:'9px 11px 9px 33px',borderRadius:8,background:'rgba(0,0,0,0.4)',border:'1px solid rgba(255,255,255,0.08)',color:'#fff7ed',fontFamily:'"Outfit",sans-serif',fontSize:13,outline:'none',boxSizing:'border-box'}}/>
+        <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="search cards by name, team, tagï¿½" style={{width:'100%',padding:'9px 11px 9px 33px',borderRadius:8,background:'rgba(0,0,0,0.4)',border:'1px solid rgba(255,255,255,0.08)',color:'#fff7ed',fontFamily:'"Outfit",sans-serif',fontSize:13,outline:'none',boxSizing:'border-box'}}/>
       </div>
       <div style={{display:'flex',alignItems:'center',gap:6,padding:'4px 8px 4px 12px',borderRadius:8,background:'rgba(0,0,0,0.4)',border:'1px solid rgba(255,255,255,0.08)'}}>
         <ArrowUpDown size={13} style={{color:'#78716c'}}/>
@@ -3123,7 +3123,7 @@ function CollectionScreen({me,onOpenCard,onMergeDuplicates}){
 }
 
 /* ==========================================================
-   PAINT CANVAS — drawing surface for Design Studio
+   PAINT CANVAS ï¿½ drawing surface for Design Studio
    ========================================================== */
 function PaintCanvas({portrait,onChange,clipboardRef}){
   const canvasRef = useRef(null);
@@ -3325,12 +3325,12 @@ function PaintCanvas({portrait,onChange,clipboardRef}){
         </div>
         <div style={{display:'flex',alignItems:'center',gap:6,marginTop:6}}>
           <input type="color" value={color} onChange={e=>setColor(e.target.value)} style={{width:28,height:24,border:'1px solid rgba(255,255,255,0.15)',borderRadius:4,padding:0,background:'transparent',cursor:'pointer'}}/>
-          <span style={{fontSize:9,color:'#a8a29e',fontFamily:'"JetBrains Mono",monospace',letterSpacing:'0.1em'}}>CUSTOM · {color.toUpperCase()}</span>
+          <span style={{fontSize:9,color:'#a8a29e',fontFamily:'"JetBrains Mono",monospace',letterSpacing:'0.1em'}}>CUSTOM ï¿½ {color.toUpperCase()}</span>
         </div>
       </div>
       {/* Insert player (4 SVG poses) */}
       <div style={{marginTop:8,paddingTop:8,borderTop:'1px solid rgba(255,255,255,0.06)'}}>
-        <div style={{fontSize:8,color:'#78716c',letterSpacing:'0.16em',fontFamily:'"JetBrains Mono",monospace',marginBottom:4}}>INSERT PLAYER · loads pose template</div>
+        <div style={{fontSize:8,color:'#78716c',letterSpacing:'0.16em',fontFamily:'"JetBrains Mono",monospace',marginBottom:4}}>INSERT PLAYER ï¿½ loads pose template</div>
         <div style={{display:'grid',gridTemplateColumns:'repeat(4, 1fr)',gap:4}}>
           {Object.keys(POSE_PORTRAITS).map(key=>{
             const Pose = POSE_PORTRAITS[key];
@@ -3394,13 +3394,13 @@ function EditOldCardsModal({me,onClose,onPick}){
       <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
         <div>
           <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:26,letterSpacing:'0.04em',display:'flex',alignItems:'center',gap:10}}><Edit3 size={22} style={{color:'#a855f7'}}/>EDIT OLD CARD</div>
-          <div style={{fontSize:11,color:'#a8a29e',marginTop:2}}>Pick a card to load into the design studio · keeps stats, lets you redraw the portrait</div>
+          <div style={{fontSize:11,color:'#a8a29e',marginTop:2}}>Pick a card to load into the design studio ï¿½ keeps stats, lets you redraw the portrait</div>
         </div>
         <button onClick={onClose} style={{background:'rgba(255,255,255,0.05)',border:'1px solid rgba(255,255,255,0.1)',color:'#fff7ed',cursor:'pointer',padding:8,borderRadius:8}}><X size={18}/></button>
       </div>
       <div style={{flex:1,overflowY:'auto'}}>
         {me.ownedCards.length===0 ? (
-          <div style={{padding:30,textAlign:'center',color:'#78716c',fontSize:12}}>NO CARDS YET — open a pack first!</div>
+          <div style={{padding:30,textAlign:'center',color:'#78716c',fontSize:12}}>NO CARDS YET ï¿½ open a pack first!</div>
         ) : (
           <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill, minmax(120px, 1fr))',gap:10}}>
             {me.ownedCards.map(c=>(
@@ -3442,7 +3442,7 @@ function FloatingNature(){
   ];
   return(
     <div style={{position:'fixed',inset:0,pointerEvents:'none',zIndex:1,overflow:'hidden'}}>
-      {/* Waterfall — right side */}
+      {/* Waterfall ï¿½ right side */}
       <div style={{position:'absolute',top:0,right:'1%',width:40,height:'100%',opacity:0.2}}>
         {[0,1,2,3,4,5,6,7].map(i=>(
           <div key={i} style={{position:'absolute',left:i*2+'px',top:0,width:2,height:'100%',background:'linear-gradient(180deg,transparent 0%,#67e8f9 20%,#22d3ee 50%,#67e8f9 80%,transparent 100%)',animation:'waterfall-stream 1.8s linear '+(i*0.22)+'s infinite',borderRadius:2}}/>
@@ -3473,14 +3473,14 @@ function NavButton({label,sub,Icon,emoji,isHero,isActive,onClick,color}){
 }
 
 /* ==========================================================
-   MAIN APP — auth, persistent storage, routing
+   MAIN APP ï¿½ auth, persistent storage, routing
    ========================================================== */
 
 export default function EcoHome({ session }){
   const [storageReady,setStorageReady] = useState(false);
   const [users,setUsers] = useState({});
   const [pendingTrades,setPendingTrades] = useState([]);
-  // currentUsername is driven by the Supabase session — set after data loads.
+  // currentUsername is driven by the Supabase session ï¿½ set after data loads.
   const [currentUsername,setCurrentUsername] = useState(null);
   const [screen,setScreen] = useState('home');
   const [packOpening,setPackOpening] = useState(null);
@@ -3542,7 +3542,7 @@ export default function EcoHome({ session }){
     const ni={...(me.cardInjury||{})};if(exp.injured){ni[cardId]='injured';}
     updateUser(me.username,u=>({...u,materials:nm,expeditions:ne,cardInjury:ni}));
     const ms=Object.entries(exp.reward||{}).filter(([,q])=>q>0).map(([m,q])=>'+'+q+' '+m).join(', ');
-    showToast(exp.injured?'Got: '+ms+' — returned injured!':'Collected: '+ms,exp.injured?'err':'ok');
+    showToast(exp.injured?'Got: '+ms+' ï¿½ returned injured!':'Collected: '+ms,exp.injured?'err':'ok');
   };
   const handleAssignAnimal=function(ghIndex,cardId,assign){
     if(!me)return;
@@ -3575,12 +3575,12 @@ export default function EcoHome({ session }){
     showToast('FAVOURITE ANIMAL SET!');
   };
   const musicDisposeRef = useRef(null);
-  const [selectedGoat,setSelectedGoat] = useState(null); // 'lebron' | 'mj' — set on login, themes the app background
+  const [selectedGoat,setSelectedGoat] = useState(null); // 'lebron' | 'mj' ï¿½ set on login, themes the app background
 
   const showToast = (msg,kind='ok') => setToast({msg,kind});
 
   // Load on mount. NOTE: we deliberately do NOT subscribe to realtime
-  // changes that would overwrite in-memory user state — that race
+  // changes that would overwrite in-memory user state ï¿½ that race
   // condition wiped Tyler's roster in the first version of Pass 2.
   // Trade refresh is handled manually when the user opens the inbox.
   useEffect(()=>{
@@ -3634,7 +3634,7 @@ export default function EcoHome({ session }){
     try { await persistRoster(data); } catch (e) { console.error('[persistRoster]', e); }
   },[currentUsername]);
 
-  // Manual trade refresh — used when the user opens the inbox.
+  // Manual trade refresh ï¿½ used when the user opens the inbox.
   const persistMyBinderData = useCallback(async (data) => {
     if (!data || data.username !== currentUsername) return;
     try { await persistBinderData(data); } catch (e) { console.error('[persistBinderData]', e); }
@@ -3716,7 +3716,7 @@ export default function EcoHome({ session }){
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[me?.username]);
 
-  // Points ticker — only when logged in
+  // Points ticker ï¿½ only when logged in
   useEffect(()=>{
     if(!me) return;
     let lastSave = Date.now();
@@ -3737,7 +3737,7 @@ export default function EcoHome({ session }){
     return ()=>clearInterval(id);
   },[me?.username,totalPPS,persistUser]);
 
-  // Music engine — manages Tone.js track lifecycle
+  // Music engine ï¿½ manages Tone.js track lifecycle
   useEffect(()=>{
     let cancelled = false;
     (async()=>{
@@ -3782,7 +3782,7 @@ export default function EcoHome({ session }){
       const u = prev[username];
       if(!u) return prev;
       const newU = typeof updater==='function' ? updater(u) : {...u,...updater};
-      // Persist profile (points etc.) — fast
+      // Persist profile (points etc.) ï¿½ fast
       persistUser(username, newU);
       // Persist roster atomically (only allowed for current signed-in user)
       persistMyRoster(newU);
@@ -3837,7 +3837,7 @@ export default function EcoHome({ session }){
   };
 
   const handleLogin = (username, goatId='lebron') => {
-    // Legacy no-op — login now happens via App.jsx ? Supabase auth
+    // Legacy no-op ï¿½ login now happens via App.jsx ? Supabase auth
     setSelectedGoat(goatId);
     setScreen('home');
   };
@@ -3982,7 +3982,7 @@ export default function EcoHome({ session }){
     const dmg = getCardState(me, card.id).damage; const value = Math.floor(effValue(getCardValue(card), dmg)*0.6);
     updateUserAndRoster(me.username, u=>({...u, points:u.points+value, ownedCards: removeOneCardById(u.ownedCards, card.id)}));
     const remaining = (card.qty||1) - 1;
-    showToast(remaining > 0 ? `SOLD 1 OF ${(card.qty||1)} · +${value.toLocaleString()} PTS` : `SOLD FOR ${value.toLocaleString()} PTS`);
+    showToast(remaining > 0 ? `SOLD 1 OF ${(card.qty||1)} ï¿½ +${value.toLocaleString()} PTS` : `SOLD FOR ${value.toLocaleString()} PTS`);
     // Close the detail modal only if no copies remain in the stack
     if(remaining <= 0) setCardDetail(null);
   };
@@ -4021,7 +4021,7 @@ export default function EcoHome({ session }){
     const fromHasAll = fromMissingCards.length === 0 && !fromShortPoints;
     const toHasAll = toMissingCards.length === 0 && !toShortPoints;
     if(!fromHasAll || !toHasAll){
-      console.log('[acceptTrade] OFFER NO LONGER VALID — debug:');
+      console.log('[acceptTrade] OFFER NO LONGER VALID ï¿½ debug:');
       console.log('  trade:', trade);
       console.log('  fromUser:', fromUser.username, 'cards:', fromUser.ownedCards.map(c=>c.id), 'points:', fromUser.points);
       console.log('  toUser:', toUser.username, 'cards:', toUser.ownedCards.map(c=>c.id), 'points:', toUser.points);
@@ -4075,7 +4075,7 @@ export default function EcoHome({ session }){
   };
 
   const handleResetData = async () => {
-    // For safety, this only signs out — actually resetting family data
+    // For safety, this only signs out ï¿½ actually resetting family data
     // requires admin access in Supabase. Keep this button limited.
     await supabaseSignOut();
     setUsers({});
@@ -4178,13 +4178,13 @@ export default function EcoHome({ session }){
     return <>
       <style>{globalStyles}</style>
       <div style={{position:'fixed',inset:0,display:'flex',alignItems:'center',justifyContent:'center',background:'#0a0908',color:'#f5f3eb',fontFamily:'Inter,system-ui,sans-serif',fontSize:14,opacity:0.7}}>
-        Loading your family's data…
+        Loading your family's dataï¿½
       </div>
       {toast && <Toast message={toast.msg} kind={toast.kind} onDone={()=>setToast(null)}/>}
     </>;
   }
 
-  // Goat picker — after PIN login, before the game. User picks LeBron or MJ theme.
+  // Goat picker ï¿½ after PIN login, before the game. User picks LeBron or MJ theme.
   if(currentUsername && !selectedGoat){
     return <>
       <style>{globalStyles}</style>
@@ -4212,12 +4212,12 @@ export default function EcoHome({ session }){
     <div style={{minHeight:'100vh',width:'100%',background:themeBg,color:'#fff7ed',fontFamily:'"Outfit", system-ui, sans-serif',position:'relative',overflow:'hidden',paddingBottom:140}}>
       <style>{globalStyles}</style>
       <FloatingNature/>
-      {/* Pattern overlay removed — clean eco bg */}
-      {/* Big jersey watermark in bottom-right — wallpaper-style identification */}
+      {/* Pattern overlay removed ï¿½ clean eco bg */}
+      {/* Big jersey watermark in bottom-right ï¿½ wallpaper-style identification */}
       {/* eco: jersey watermark removed */}
-      {/* Top accent stripe — team primary color */}
+      {/* Top accent stripe ï¿½ team primary color */}
       {selectedGoat && <div style={{position:'fixed',top:0,left:0,right:0,height:3,background:`linear-gradient(90deg, ${themePrimary}, ${themeAccent} 50%, ${themePrimary})`,zIndex:60,boxShadow:`0 0 16px rgba(${themePrimaryRgb},0.6)`}}/>}
-      {/* Side glow — left edge */}
+      {/* Side glow ï¿½ left edge */}
       {selectedGoat && <div style={{position:'fixed',top:0,left:0,bottom:0,width:60,background:`linear-gradient(90deg, rgba(${themePrimaryRgb},0.18), transparent)`,pointerEvents:'none',zIndex:0}}/>}
 
       <header data-app-header="true" style={{position:'sticky',top:0,zIndex:40,padding:'14px 28px',display:'flex',justifyContent:'space-between',alignItems:'center',borderBottom:`1px solid rgba(${themeRgb},0.25)`,background:`linear-gradient(180deg, rgba(${themePrimaryRgb},0.18) 0%, rgba(12,9,7,0.85) 100%)`,backdropFilter:'blur(8px)',gap:14}}>
@@ -4227,12 +4227,12 @@ export default function EcoHome({ session }){
             <div style={{display:'flex',alignItems:'center',gap:6,flexWrap:'wrap'}}>
               <span style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:20,letterSpacing:'0.05em',background:'linear-gradient(180deg, #fff7ed, #4ade80)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent'}}>ECO</span>
               <span style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:20,color:'#fb923c',letterSpacing:'0.05em'}}>HEROES</span>
-              {themeName && <span title={`Vibing with ${themeName} · ${themeTeam}`} style={{display:'inline-flex',alignItems:'center',gap:5,marginLeft:4,padding:'4px 9px 4px 5px',borderRadius:6,background:`linear-gradient(135deg, rgba(${themePrimaryRgb},0.4), rgba(${themePrimaryRgb},0.18))`,border:`1px solid ${themeAccent}`,color:themeAccent,fontFamily:'"JetBrains Mono",monospace',fontSize:9.5,letterSpacing:'0.14em',fontWeight:700,boxShadow:`0 0 12px rgba(${themePrimaryRgb},0.4)`}}>
+              {themeName && <span title={`Vibing with ${themeName} ï¿½ ${themeTeam}`} style={{display:'inline-flex',alignItems:'center',gap:5,marginLeft:4,padding:'4px 9px 4px 5px',borderRadius:6,background:`linear-gradient(135deg, rgba(${themePrimaryRgb},0.4), rgba(${themePrimaryRgb},0.18))`,border:`1px solid ${themeAccent}`,color:themeAccent,fontFamily:'"JetBrains Mono",monospace',fontSize:9.5,letterSpacing:'0.14em',fontWeight:700,boxShadow:`0 0 12px rgba(${themePrimaryRgb},0.4)`}}>
                 <span style={{width:16,height:16,borderRadius:3,background:themeAccent,color:themePrimary,fontFamily:'"Bebas Neue",sans-serif',fontSize:10,display:'flex',alignItems:'center',justifyContent:'center',lineHeight:1,fontWeight:900}}>{themeNumber}</span>
                 {themeTeam}
               </span>}
             </div>
-            <div style={{fontSize:9.5,color:me.color,letterSpacing:'0.18em',fontWeight:600,marginTop:1,fontFamily:'"JetBrains Mono",monospace'}}>{me.emoji} {me.displayName.toUpperCase()} · LIVE</div>
+            <div style={{fontSize:9.5,color:me.color,letterSpacing:'0.18em',fontWeight:600,marginTop:1,fontFamily:'"JetBrains Mono",monospace'}}>{me.emoji} {me.displayName.toUpperCase()} ï¿½ LIVE</div>
           </div>
         </div>
         <button className="header-user-button" onClick={()=>setUserMenuOpen(true)} title="Account / sign out" style={{display:'none',alignItems:'center',justifyContent:'center',width:40,height:40,borderRadius:12,background:`${me.color}22`,border:`1px solid ${me.color}`,color:'#fff7ed',fontSize:20,cursor:'pointer',padding:0,marginRight:4,flexShrink:0}}>{me.emoji}</button>
@@ -4258,10 +4258,10 @@ export default function EcoHome({ session }){
       {/* Bottom dock with USER button */}
       <div data-dock="true" style={{position:'fixed',bottom:16,left:'50%',transform:'translateX(-50%)',display:'flex',flexWrap:'wrap',justifyContent:'center',gap:6,padding:8,background:'rgba(8,20,12,0.92)',backdropFilter:'blur(14px)',borderRadius:18,border:'none',boxShadow:'0 12px 40px -8px rgba(0,0,0,0.7), 0 0 0 2px #2d5a2e, 0 0 0 4px #1a3d1b, 0 0 0 6px rgba(74,222,128,0.15), 0 0 20px rgba(74,222,128,0.1)',zIndex:50,maxWidth:'calc(100vw - 32px)',overflowX:'auto'}}>
         <NavButton label="HOME" sub="ROSTER" Icon={Home} isActive={screen==='home'} onClick={()=>setScreen('home')}/>
-        <NavButton label="SHOP" sub="TRADE · BUY" Icon={Store} isActive={screen==='shop'} onClick={()=>setScreen('shop')}/>
+        <NavButton label="SHOP" sub="TRADE ï¿½ BUY" Icon={Store} isActive={screen==='shop'} onClick={()=>setScreen('shop')}/>
         <NavButton label="COLLECT" sub="DEEP DIVE" Icon={Library} isActive={screen==='collection'} onClick={()=>setScreen('collection')}/>
 
-        <NavButton label="FOOD" sub="FEED · VET" Icon={Sparkles} isActive={screen==='food'} onClick={()=>setScreen('food')} color="#4ade80"/>
+        <NavButton label="FOOD" sub="FEED ï¿½ VET" Icon={Sparkles} isActive={screen==='food'} onClick={()=>setScreen('food')} color="#4ade80"/>
         <NavButton label="TRAVEL" sub="EXPEDITIONS" Icon={Rocket} isActive={screen==='travel'} onClick={()=>setScreen('travel')} color="#c4b5fd"/>
         <NavButton label="SHELTER" sub="BUILD" Icon={Sparkles} isActive={screen==='shelter'} onClick={()=>setScreen('shelter')} color="#86efac"/>
         <NavButton label="LEADERS" sub="FAMILY RANKS" Icon={Trophy} isActive={false} onClick={()=>setLeaderboardOpen(true)} color="#fbbf24"/>
@@ -4281,7 +4281,7 @@ export default function EcoHome({ session }){
       {mobileNavOpen && <MobileNavSheet onClose={()=>setMobileNavOpen(false)} screen={screen} setScreen={setScreen} setLeaderboardOpen={setLeaderboardOpen} refreshTrades={refreshTrades} setInboxOpen={setInboxOpen} setMusicStoreOpen={setMusicStoreOpen} inboxCount={inboxCount}/>}
       {cardDetail && <CardDetailModal card={cardDetail.card} isMine={cardDetail.isMine} onClose={()=>setCardDetail(null)} onSell={cardDetail.isMine?handleSellCard:null} onEdit={cardDetail.isMine?handleEditCardFromModal:null} binders={me?((me.binderData&&me.binderData.binders)||[]):[]} inBinder={me?findCardSlot(me.binderData, cardDetail.card.id):null} onAddToBinder={(bid)=>handleAddCardToBinderFirstSlot(bid, cardDetail.card.id)} onRemoveFromBinder={()=>{ const loc=findCardSlot(me.binderData, cardDetail.card.id); if(loc){ handleRemoveCardFromBinder(loc.binderId, loc.slot); setCardDetail(null); } }} damage={me?getCardState(me, cardDetail.card.id).damage:0} caseType={me?getCardState(me, cardDetail.card.id).caseType:null} onRepair={handleRepairCard} onEncase={handleEncaseCard} shelters={me?me.shelters:null} onAddToShelter={handleAssignAnimal} vetInventory={me?me.vetInventory:null} cardInjury={me?me.cardInjury:null} onHealCard={handleHealAnimal}/>}
       {favCardPickerOpen && me && <FavCardPicker me={me} onClose={()=>setFavCardPickerOpen(false)} onPick={handlePickFavCard}/>}
-      {comingSoonOpen && <ComingSoonModal title="MINI GAMES · COMING SOON" body="Quick games to earn extra points are on the way — H-O-R-S-E, free-throw timing, trivia challenges. Check back in a future version!" onClose={()=>setComingSoonOpen(false)}/>}
+      {comingSoonOpen && <ComingSoonModal title="MINI GAMES ï¿½ COMING SOON" body="Quick games to earn extra points are on the way ï¿½ H-O-R-S-E, free-throw timing, trivia challenges. Check back in a future version!" onClose={()=>setComingSoonOpen(false)}/>}
       {musicStoreOpen && <MusicStore me={me} onClose={()=>setMusicStoreOpen(false)} onBuy={handleBuyTrack} onPlay={handlePlayTrack} currentTrackId={musicTrackId}/>}
       {supernovaCard && <SupernovaCelebration card={supernovaCard} onDone={()=>setSupernovaCard(null)}/>}
       {moonCard && <MoonCelebration card={moonCard} onDone={()=>setMoonCard(null)}/>}
