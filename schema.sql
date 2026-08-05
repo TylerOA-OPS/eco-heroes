@@ -222,6 +222,49 @@ grant execute on function public.apply_trade_accept(uuid, jsonb, jsonb) to authe
 -- ---------- REALTIME ----------
 alter publication supabase_realtime add table public.pending_trades;
 
+-- ---------- MINI GAME SCORES ----------
+-- Shared family leaderboard: one high-score row per user per game.
+create table if not exists public.mini_game_scores (
+  id uuid primary key default gen_random_uuid(),
+  owner_id uuid not null references public.profiles(id) on delete cascade,
+  game_id text not null,
+  high_score integer not null default 0,
+  updated_at timestamptz not null default now(),
+  unique (owner_id, game_id)
+);
+
+create index if not exists mini_game_scores_game_idx on public.mini_game_scores(game_id);
+
+alter table public.mini_game_scores enable row level security;
+
+-- everyone in the family can read every score
+drop policy if exists "read all mini game scores" on public.mini_game_scores;
+create policy "read all mini game scores" on public.mini_game_scores for select using (true);
+
+-- writes go through the RPC below (security definer), so no insert/update policy.
+
+-- RPC: submit a run, keeping the family-wide best per user + game.
+create or replace function public.submit_mini_game_score(p_game_id text, p_score integer)
+returns void
+language plpgsql
+security definer
+as $function$
+declare
+  v_user_id uuid := auth.uid();
+begin
+  if v_user_id is null then
+    raise exception 'Not authenticated';
+  end if;
+  insert into public.mini_game_scores (owner_id, game_id, high_score, updated_at)
+  values (v_user_id, p_game_id, greatest(0, p_score), now())
+  on conflict (owner_id, game_id)
+  do update set high_score = greatest(public.mini_game_scores.high_score, excluded.high_score),
+                updated_at = now();
+end;
+$function$;
+
+grant execute on function public.submit_mini_game_score(text, integer) to authenticated;
+
 -- ============================================================
 -- DONE. Now:
 -- 1. Create 6 auth users via Authentication > Users > Add user
