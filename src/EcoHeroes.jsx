@@ -3,6 +3,7 @@ import * as Tone from 'tone';
 import { supabase, signOut as supabaseSignOut } from './lib/supabase.js';
 import { loadAllData, subscribeToTrades } from './lib/dataStore.js';
 import { persistProfile, persistRoster, persistBinderData, sendTrade as sendTradeToSupabase, updateTradeStatus, applyTradeAccept, loadTradesOnly } from './lib/persist.js';
+import { submitMiniGameScore, loadMiniGameHighScores } from './lib/leaderboard.js';
 import {
   ArrowLeftRight, Palette, Library, Sparkles, TrendingUp, Flame, Filter, Gift,
   Package, Mail, X, Check, Home, Store, ShoppingCart, ArrowRight, Shuffle,
@@ -63,6 +64,12 @@ const PACK_TYPES = {
   moon_alien:     { id:'moon_alien',     label:'SELENE ROULETTE', subtitle:'1 random moon card',     price:25000, accent:'#c4b5fd', rarityWeights:{legend:55,mythic:45}, materialWeights:{platinum:10,diamond:15,supernova:10,crescent_moon:25,half_moon:25,full_moon:15} },
 };
 const DAILY_REWARD = 5000;
+// Mini games award food live during play, up to a generous daily cap. Once the
+// cap is hit games still play and score, they just stop paying out food. The cap
+// counts food units earned per calendar day; tune it freely.
+const MINIGAME_DAILY_FOOD_CAP = 500;
+// Which FOOD_ITEMS id onEarnFood() grants (one unit per call).
+const MINIGAME_FOOD_REWARD = 'berries';
 
 // Hunger system â€” drops 1% every 5 real minutes (300000ms)
 const HUNGER_DROP_INTERVAL_MS = 300000;
@@ -2084,7 +2091,7 @@ function FavCardPicker({me, onClose, onPick}){
 }
 
 /* HOME SCREEN */
-function HomeScreen({me,pendingCount,onClaimDaily,onOpenPack,onOpenInbox,onOpenCard,onShowComingSoon}){
+function HomeScreen({me,pendingCount,onClaimDaily,onOpenPack,onOpenInbox,onOpenCard,onShowComingSoon,onOpenMiniGames}){
   const [filter,setFilter] = useState('all');
   const [hoveredId,setHoveredId] = useState(null);
   const looseAll = useMemo(()=>getLooseCards(me),[me.ownedCards, me.binderData]);
@@ -2095,7 +2102,7 @@ function HomeScreen({me,pendingCount,onClaimDaily,onOpenPack,onOpenInbox,onOpenC
       <QuickAction icon={Gift} label={me.dailyClaimed?'DAILY · CLAIMED':'CLAIM DAILY'} sub={me.dailyClaimed?'come back tomorrow':`+${DAILY_REWARD.toLocaleString()} eco free`} accent={me.dailyClaimed?'#52525b':'#4ade80'} badge={!me.dailyClaimed&&'!'} onClick={onClaimDaily} disabled={me.dailyClaimed}/>
       <QuickAction icon={Package} label="OPEN FREE PACK" sub={me.packsAvailable>0?`${me.packsAvailable} pack ready`:'come back tomorrow'} accent={me.packsAvailable>0?'#fb923c':'#52525b'} badge={me.packsAvailable>0&&me.packsAvailable} onClick={()=>me.packsAvailable>0&&onOpenPack('daily')} disabled={me.packsAvailable<=0}/>
       <QuickAction icon={Mail} label="TRADE OFFERS" sub={pendingCount>0?`${pendingCount} waiting for you`:'all clear'} accent={pendingCount>0?'#a855f7':'#52525b'} badge={pendingCount>0&&pendingCount} onClick={onOpenInbox}/>
-      <QuickAction icon={Gamepad2} label="MINI GAMES" sub="coming soon · earn points" accent="#52525b" badge="SOON" onClick={()=>onShowComingSoon&&onShowComingSoon()} disabled={false}/>
+      <QuickAction icon={Gamepad2} label="MINI GAMEZ" sub="play · earn food" accent="#a855f7" onClick={()=>onOpenMiniGames&&onOpenMiniGames()} disabled={false}/>
     </div>
     <div style={{padding:'24px 28px 16px',display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:12}}>
       <div>
@@ -3442,6 +3449,136 @@ function NavButton({label,sub,Icon,emoji,isHero,isActive,onClick,color}){
    MAIN APP — auth, persistent storage, routing
    ========================================================== */
 
+/* ── MINI GAMEZ ──────────────────────────────────────────────────────────
+   Data-driven arcade shell. Adding a game later is ONE entry in MINI_GAMES,
+   not new UI.
+
+   A game entry: { id, name, emoji, desc, Component? }
+     - id    stable string, also the leaderboard key.
+     - name  display title.
+     - desc  one-line description shown on the arcade row.
+     - Component  the actual game (optional). When omitted the launcher
+                  renders PlaceholderGame.
+
+   GAME CONTRACT — each game Component mounts inside the full-screen play view
+   and receives exactly these props. Games are self-contained and get NOTHING
+   from the player collection, so they cannot be pay-to-win:
+     onEarnFood()       call during play to grant the player food. Safe to call
+                        as often as you like; the shell enforces a daily cap and
+                        silently stops paying once it is reached.
+     onGameOver(score)  call once when a run ends, with the final integer score.
+                        The shell posts it to the shared family leaderboard.
+   The `game` definition is also passed for display convenience (a real game
+   does not need it). */
+const MINI_GAMES = [
+  { id:'whack_a_mole', name:'Whack-a-Mole', emoji:'🐹', desc:'Bonk the moles as they pop out of their holes.' },
+  { id:'trash_clean',  name:'Trash Clean',  emoji:'🗑️', desc:'Scoop up the litter before the timer runs out.' },
+  { id:'frog_vs_flys', name:'Frog vs Flys', emoji:'🐸', desc:'Snap up flies with a well-timed tongue flick.' },
+];
+
+// Stand-in game used until a real Component is supplied for an entry.
+function PlaceholderGame({ game }){
+  return <div style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:14,padding:'48px 20px',textAlign:'center'}}>
+    <div style={{fontSize:72,lineHeight:1}}>{game.emoji}</div>
+    <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:36,letterSpacing:'0.04em',color:'#fff7ed',lineHeight:0.95}}>{game.name.toUpperCase()}</div>
+    <div style={{fontFamily:'"JetBrains Mono",monospace',fontSize:12,letterSpacing:'0.3em',color:'#fbbf24'}}>COMING SOON</div>
+    <div style={{maxWidth:280,fontSize:12.5,color:'#a8a29e',lineHeight:1.5}}>{game.desc}</div>
+  </div>;
+}
+
+// Shared family high-score panel for one game.
+function MiniGameScoreBoard({ rows, userById }){
+  return <div style={{padding:'16px 20px 32px',borderTop:'1px solid rgba(255,255,255,0.08)'}}>
+    <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:10}}>
+      <Trophy size={15} style={{color:'#fbbf24'}}/>
+      <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:17,letterSpacing:'0.14em',color:'#fbbf24'}}>FAMILY HIGH SCORES</div>
+    </div>
+    {rows.length===0
+      ? <div style={{fontSize:12,color:'#78716c'}}>No scores yet — be the first to set one!</div>
+      : <div style={{display:'flex',flexDirection:'column',gap:2}}>
+          {rows.map((r,i)=>{
+            const u = userById[r.ownerId];
+            return <div key={r.ownerId} style={{display:'flex',alignItems:'center',gap:10,padding:'7px 8px',borderRadius:8,background:i===0?'rgba(251,191,36,0.08)':'transparent'}}>
+              <div style={{width:24,fontFamily:'"JetBrains Mono",monospace',fontSize:12,color:i===0?'#fbbf24':'#78716c'}}>#{i+1}</div>
+              <div style={{fontSize:16,lineHeight:1}}>{u?u.emoji:'❓'}</div>
+              <div style={{flex:1,fontFamily:'"Outfit",sans-serif',fontSize:13,color:'#fff7ed'}}>{u?u.displayName:'Unknown'}</div>
+              <div style={{fontFamily:'"JetBrains Mono",monospace',fontSize:14,fontWeight:700,color:'#fbbf24'}}>{r.highScore}</div>
+            </div>;
+          })}
+        </div>}
+  </div>;
+}
+
+// The arcade screen + launch flow. Owns which game is open; the App owns the
+// food-payout and leaderboard side effects and passes them down as callbacks.
+function MiniGamesScreen({ me, users, onBack, onEarnFood, onGameOver }){
+  const [activeGame, setActiveGame] = useState(null);
+  const [scoresByGame, setScoresByGame] = useState({});
+
+  const userById = useMemo(()=>{
+    const map = {};
+    Object.values(users||{}).forEach(u=>{ if(u && u.id) map[u.id] = u; });
+    return map;
+  },[users]);
+
+  const refreshScores = useCallback(async (gameId)=>{
+    const rows = await loadMiniGameHighScores(gameId);
+    setScoresByGame(prev=>({ ...prev, [gameId]: rows }));
+  },[]);
+
+  useEffect(()=>{ MINI_GAMES.forEach(g=>refreshScores(g.id)); },[refreshScores]);
+
+  const handleOver = useCallback((gameId, score)=>{
+    if(onGameOver) onGameOver(gameId, score);
+    // Let the post settle, then pull the fresh board for this game.
+    setTimeout(()=>refreshScores(gameId), 500);
+  },[onGameOver, refreshScores]);
+
+  // ── FULL-SCREEN PLAY VIEW ──
+  if(activeGame){
+    const GameComponent = activeGame.Component || PlaceholderGame;
+    const rows = scoresByGame[activeGame.id] || [];
+    return <div style={{position:'fixed',inset:0,zIndex:80,background:'linear-gradient(180deg, #0c1a10 0%, #050a06 100%)',display:'flex',flexDirection:'column'}}>
+      <div style={{display:'flex',alignItems:'center',gap:12,padding:'14px 18px',borderBottom:'1px solid rgba(74,222,128,0.2)',flexShrink:0}}>
+        <button onClick={()=>setActiveGame(null)} style={{display:'flex',alignItems:'center',gap:6,padding:'8px 14px',borderRadius:50,border:'1px solid rgba(255,255,255,0.2)',background:'rgba(0,0,0,0.5)',color:'#e7e5e4',fontFamily:'"Bebas Neue",sans-serif',letterSpacing:'0.12em',fontSize:12,cursor:'pointer'}}><ChevronLeft size={14}/>ARCADE</button>
+        <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:24,letterSpacing:'0.06em',color:'#fff7ed'}}>{activeGame.name.toUpperCase()}</div>
+      </div>
+      <div style={{flex:1,display:'flex',flexDirection:'column',overflowY:'auto'}}>
+        <GameComponent game={activeGame} onEarnFood={onEarnFood} onGameOver={(score)=>handleOver(activeGame.id, score)}/>
+        <MiniGameScoreBoard rows={rows} userById={userById}/>
+      </div>
+    </div>;
+  }
+
+  // ── ARCADE LIST ──
+  return <div style={{padding:'20px 20px 130px',maxWidth:640,margin:'0 auto'}}>
+    <button onClick={onBack} style={{display:'inline-flex',alignItems:'center',gap:6,padding:'8px 12px',borderRadius:50,border:'1px solid rgba(255,255,255,0.2)',background:'rgba(0,0,0,0.4)',color:'#e7e5e4',fontFamily:'"Bebas Neue",sans-serif',letterSpacing:'0.12em',fontSize:11,cursor:'pointer',marginBottom:14}}><ChevronLeft size={13}/>HOME</button>
+    <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:44,letterSpacing:'0.04em',color:'#fff7ed',lineHeight:0.9}}>MINI GAMEZ</div>
+    <div style={{fontFamily:'"JetBrains Mono",monospace',fontSize:11,letterSpacing:'0.2em',color:'#a8a29e',marginTop:4,marginBottom:20}}>PLAY TO EARN FOOD · CLIMB THE FAMILY BOARD</div>
+    <div style={{display:'flex',flexDirection:'column',gap:12}}>
+      {MINI_GAMES.map(g=>{
+        const rows = scoresByGame[g.id] || [];
+        const top = rows[0];
+        const topUser = top ? userById[top.ownerId] : null;
+        return <button key={g.id} onClick={()=>setActiveGame(g)} style={{display:'flex',alignItems:'center',gap:14,padding:'14px 16px',borderRadius:14,border:'1px solid rgba(74,222,128,0.25)',background:'linear-gradient(135deg, rgba(74,222,128,0.08), rgba(255,255,255,0.02))',cursor:'pointer',textAlign:'left',width:'100%'}}>
+          <div style={{fontSize:40,lineHeight:1,flexShrink:0}}>{g.emoji}</div>
+          <div style={{flex:1,minWidth:0}}>
+            <div style={{fontFamily:'"Bebas Neue",sans-serif',fontSize:23,color:'#fff7ed',letterSpacing:'0.03em',lineHeight:1}}>{g.name.toUpperCase()}</div>
+            <div style={{fontSize:12,color:'#a8a29e',marginTop:4}}>{g.desc}</div>
+          </div>
+          <div style={{textAlign:'right',minWidth:66,flexShrink:0}}>
+            {top
+              ? <><div style={{fontFamily:'"JetBrains Mono",monospace',fontSize:15,fontWeight:700,color:'#fbbf24'}}>🏆 {top.highScore}</div>
+                  <div style={{fontSize:9,color:'#78716c',letterSpacing:'0.08em',marginTop:2}}>{topUser?topUser.displayName.toUpperCase():'—'}</div></>
+              : <div style={{fontSize:9.5,color:'#52525b',letterSpacing:'0.08em'}}>NO SCORES YET</div>}
+          </div>
+          <ChevronRight size={18} style={{color:'#4ade80',flexShrink:0}}/>
+        </button>;
+      })}
+    </div>
+  </div>;
+}
+
 export default function EcoHome({ session }){
   const [storageReady,setStorageReady] = useState(false);
   const [users,setUsers] = useState({});
@@ -3823,6 +3960,28 @@ export default function EcoHome({ session }){
     if(!me || me.dailyClaimed) return;
     updateUser(me.username, u=>({...u, points:u.points+DAILY_REWARD, dailyClaimed:true}));
     showToast(`+${DAILY_REWARD.toLocaleString()} DAILY BONUS`);
+  };
+
+  // Mini-game food payout. Grants one unit of food per call, live during play,
+  // until the per-day cap is reached (date tracked the same way as the daily
+  // claim, via toDateString). Awarded food persists with the profile; the daily
+  // counter is session-scoped (resets on reload as well as on date change).
+  const handleMiniGameEarnFood = () => {
+    if(!me) return;
+    const today = new Date().toDateString();
+    updateUser(me.username, u=>{
+      const earned = (u.miniGameFoodDate===today) ? (u.miniGameFoodEarned||0) : 0;
+      if(earned >= MINIGAME_DAILY_FOOD_CAP){
+        return {...u, miniGameFoodDate:today, miniGameFoodEarned:earned};
+      }
+      const inv = {...(u.foodInventory||{})};
+      inv[MINIGAME_FOOD_REWARD] = (inv[MINIGAME_FOOD_REWARD]||0) + 1;
+      return {...u, foodInventory:inv, miniGameFoodDate:today, miniGameFoodEarned:earned+1};
+    });
+  };
+  // A mini-game run ended — post the score to the shared family leaderboard.
+  const handleMiniGameOver = (gameId, score) => {
+    submitMiniGameScore(gameId, score);
   };
 
   const handleOpenPack = (packType, size = 3) => {
@@ -4211,12 +4370,13 @@ export default function EcoHome({ session }){
         </div>
       </header>
 
-      {screen==='home' && <HomeScreen me={me} pendingCount={inboxCount} onClaimDaily={handleClaimDaily} onOpenPack={handleOpenPack} onOpenInbox={()=>{ refreshTrades(); setInboxOpen(true); }} onOpenCard={(c)=>setCardDetail({card:c,isMine:true})} onShowComingSoon={()=>setComingSoonOpen(true)} onEditAvatar={()=>setComingSoonOpen(true)} onInviteFriend={()=>setComingSoonOpen(true)} onEditFavCard={()=>setFavCardPickerOpen(true)}/>}
+      {screen==='home' && <HomeScreen me={me} pendingCount={inboxCount} onClaimDaily={handleClaimDaily} onOpenPack={handleOpenPack} onOpenInbox={()=>{ refreshTrades(); setInboxOpen(true); }} onOpenCard={(c)=>setCardDetail({card:c,isMine:true})} onShowComingSoon={()=>setComingSoonOpen(true)} onOpenMiniGames={()=>setScreen('minigames')} onEditAvatar={()=>setComingSoonOpen(true)} onInviteFriend={()=>setComingSoonOpen(true)} onEditFavCard={()=>setFavCardPickerOpen(true)}/>}
       {screen==='shop' && <ShopScreen me={me} friends={friends} onBuyCard={handleBuyCard} onOpenPack={handleOpenPack} onStartAITrade={(t)=>setAITradeTable(t)} onStartFriendTrade={(f)=>setFriendTradeOpen(f)} onOpenCard={(c,isMine=false)=>setCardDetail({card:c,isMine})} onToast={showToast} onBuyBinder={handleBuyBinder} onBuyPages={handleBuyBinderPages}/>}
       {screen==='collection' && <CollectionScreen me={me} onOpenCard={(c)=>setCardDetail({card:c,isMine:true})} onMergeDuplicates={handleMergeDuplicates}/>}
 
       {screen==='space' && <SpaceScreen me={me} users={users} setUsers={setUsers} currentUsername={currentUsername} onBack={()=>setScreen('home')} onOpenPack={handleOpenPack} onSpinRoulette={handleSpinRoulette}/>}
       {screen==='design' && <DesignScreen points={me.points} onMint={handleMintCard} onToast={showToast} editingCard={editingCardForDesign} onCancelEdit={()=>setEditingCardForDesign(null)} onUpdateCard={handleUpdateCard} me={me} onSaveBinderCover={handleSaveBinderCover}/>}
+      {screen==='minigames' && <MiniGamesScreen me={me} users={users} onBack={()=>setScreen('home')} onEarnFood={handleMiniGameEarnFood} onGameOver={handleMiniGameOver}/>}
       {screen==='food' && <FoodScreen me={me} onFeed={handleFeedAnimal} onHeal={handleHealAnimal} onToast={showToast}/>}
       {screen==='travel' && <TravelScreen me={me} onSendExpedition={handleSendExpedition} onCollectExpedition={handleCollectExpedition} onToast={showToast}/>}
       {screen==='shelter' && <ShelterScreen me={me} onBuildShelter={handleBuildShelter} onToast={showToast} onAssignAnimal={handleAssignAnimal}/>}
